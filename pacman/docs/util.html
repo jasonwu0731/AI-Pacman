@@ -1,0 +1,666 @@
+
+<!-- saved from url=(0100)https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/search/v1/001/docs/util.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=Big5">
+  <title>util.py</title>
+  </head>
+  <body>
+  <h3>util.py (<a href="https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/search/v1/001/util.py">original</a>)</h3>
+  <hr>
+  <pre><span style="color: green; font-style: italic"># util.py
+# -------
+# Licensing Information:  You are free to use or extend these projects for
+# educational purposes provided that (1) you do not distribute or publish
+# solutions, (2) you retain this notice, and (3) you provide clear
+# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
+# 
+# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
+# The core projects and autograders were primarily created by John DeNero
+# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and
+# Pieter Abbeel (pabbeel@cs.berkeley.edu).
+
+
+</span><span style="color: blue; font-weight: bold">import </span>sys
+<span style="color: blue; font-weight: bold">import </span>inspect
+<span style="color: blue; font-weight: bold">import </span>heapq<span style="font-weight: bold">, </span>random
+<span style="color: blue; font-weight: bold">import </span>cStringIO
+
+
+<span style="color: blue; font-weight: bold">class </span>FixedRandom<span style="font-weight: bold">:
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span>fixedState <span style="font-weight: bold">= (</span><span style="color: red">3</span><span style="font-weight: bold">, (</span><span style="color: red">2147483648</span>L<span style="font-weight: bold">, </span><span style="color: red">507801126</span>L<span style="font-weight: bold">, </span><span style="color: red">683453281</span>L<span style="font-weight: bold">, </span><span style="color: red">310439348</span>L<span style="font-weight: bold">, </span><span style="color: red">2597246090</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2209084787</span>L<span style="font-weight: bold">, </span><span style="color: red">2267831527</span>L<span style="font-weight: bold">, </span><span style="color: red">979920060</span>L<span style="font-weight: bold">, </span><span style="color: red">3098657677</span>L<span style="font-weight: bold">, </span><span style="color: red">37650879</span>L<span style="font-weight: bold">, </span><span style="color: red">807947081</span>L<span style="font-weight: bold">, </span><span style="color: red">3974896263</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">881243242</span>L<span style="font-weight: bold">, </span><span style="color: red">3100634921</span>L<span style="font-weight: bold">, </span><span style="color: red">1334775171</span>L<span style="font-weight: bold">, </span><span style="color: red">3965168385</span>L<span style="font-weight: bold">, </span><span style="color: red">746264660</span>L<span style="font-weight: bold">, </span><span style="color: red">4074750168</span>L<span style="font-weight: bold">, </span><span style="color: red">500078808</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">776561771</span>L<span style="font-weight: bold">, </span><span style="color: red">702988163</span>L<span style="font-weight: bold">, </span><span style="color: red">1636311725</span>L<span style="font-weight: bold">, </span><span style="color: red">2559226045</span>L<span style="font-weight: bold">, </span><span style="color: red">157578202</span>L<span style="font-weight: bold">, </span><span style="color: red">2498342920</span>L<span style="font-weight: bold">, </span><span style="color: red">2794591496</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">4130598723</span>L<span style="font-weight: bold">, </span><span style="color: red">496985844</span>L<span style="font-weight: bold">, </span><span style="color: red">2944563015</span>L<span style="font-weight: bold">, </span><span style="color: red">3731321600</span>L<span style="font-weight: bold">, </span><span style="color: red">3514814613</span>L<span style="font-weight: bold">, </span><span style="color: red">3362575829</span>L<span style="font-weight: bold">, </span><span style="color: red">3038768745</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2206497038</span>L<span style="font-weight: bold">, </span><span style="color: red">1108748846</span>L<span style="font-weight: bold">, </span><span style="color: red">1317460727</span>L<span style="font-weight: bold">, </span><span style="color: red">3134077628</span>L<span style="font-weight: bold">, </span><span style="color: red">988312410</span>L<span style="font-weight: bold">, </span><span style="color: red">1674063516</span>L<span style="font-weight: bold">, </span><span style="color: red">746456451</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3958482413</span>L<span style="font-weight: bold">, </span><span style="color: red">1857117812</span>L<span style="font-weight: bold">, </span><span style="color: red">708750586</span>L<span style="font-weight: bold">, </span><span style="color: red">1583423339</span>L<span style="font-weight: bold">, </span><span style="color: red">3466495450</span>L<span style="font-weight: bold">, </span><span style="color: red">1536929345</span>L<span style="font-weight: bold">, </span><span style="color: red">1137240525</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3875025632</span>L<span style="font-weight: bold">, </span><span style="color: red">2466137587</span>L<span style="font-weight: bold">, </span><span style="color: red">1235845595</span>L<span style="font-weight: bold">, </span><span style="color: red">4214575620</span>L<span style="font-weight: bold">, </span><span style="color: red">3792516855</span>L<span style="font-weight: bold">, </span><span style="color: red">657994358</span>L<span style="font-weight: bold">, </span><span style="color: red">1241843248</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1695651859</span>L<span style="font-weight: bold">, </span><span style="color: red">3678946666</span>L<span style="font-weight: bold">, </span><span style="color: red">1929922113</span>L<span style="font-weight: bold">, </span><span style="color: red">2351044952</span>L<span style="font-weight: bold">, </span><span style="color: red">2317810202</span>L<span style="font-weight: bold">, </span><span style="color: red">2039319015</span>L<span style="font-weight: bold">, </span><span style="color: red">460787996</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3654096216</span>L<span style="font-weight: bold">, </span><span style="color: red">4068721415</span>L<span style="font-weight: bold">, </span><span style="color: red">1814163703</span>L<span style="font-weight: bold">, </span><span style="color: red">2904112444</span>L<span style="font-weight: bold">, </span><span style="color: red">1386111013</span>L<span style="font-weight: bold">, </span><span style="color: red">574629867</span>L<span style="font-weight: bold">, </span><span style="color: red">2654529343</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3833135042</span>L<span style="font-weight: bold">, </span><span style="color: red">2725328455</span>L<span style="font-weight: bold">, </span><span style="color: red">552431551</span>L<span style="font-weight: bold">, </span><span style="color: red">4006991378</span>L<span style="font-weight: bold">, </span><span style="color: red">1331562057</span>L<span style="font-weight: bold">, </span><span style="color: red">3710134542</span>L<span style="font-weight: bold">, </span><span style="color: red">303171486</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1203231078</span>L<span style="font-weight: bold">, </span><span style="color: red">2670768975</span>L<span style="font-weight: bold">, </span><span style="color: red">54570816</span>L<span style="font-weight: bold">, </span><span style="color: red">2679609001</span>L<span style="font-weight: bold">, </span><span style="color: red">578983064</span>L<span style="font-weight: bold">, </span><span style="color: red">1271454725</span>L<span style="font-weight: bold">, </span><span style="color: red">3230871056</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2496832891</span>L<span style="font-weight: bold">, </span><span style="color: red">2944938195</span>L<span style="font-weight: bold">, </span><span style="color: red">1608828728</span>L<span style="font-weight: bold">, </span><span style="color: red">367886575</span>L<span style="font-weight: bold">, </span><span style="color: red">2544708204</span>L<span style="font-weight: bold">, </span><span style="color: red">103775539</span>L<span style="font-weight: bold">, </span><span style="color: red">1912402393</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1098482180</span>L<span style="font-weight: bold">, </span><span style="color: red">2738577070</span>L<span style="font-weight: bold">, </span><span style="color: red">3091646463</span>L<span style="font-weight: bold">, </span><span style="color: red">1505274463</span>L<span style="font-weight: bold">, </span><span style="color: red">2079416566</span>L<span style="font-weight: bold">, </span><span style="color: red">659100352</span>L<span style="font-weight: bold">, </span><span style="color: red">839995305</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1696257633</span>L<span style="font-weight: bold">, </span><span style="color: red">274389836</span>L<span style="font-weight: bold">, </span><span style="color: red">3973303017</span>L<span style="font-weight: bold">, </span><span style="color: red">671127655</span>L<span style="font-weight: bold">, </span><span style="color: red">1061109122</span>L<span style="font-weight: bold">, </span><span style="color: red">517486945</span>L<span style="font-weight: bold">, </span><span style="color: red">1379749962</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3421383928</span>L<span style="font-weight: bold">, </span><span style="color: red">3116950429</span>L<span style="font-weight: bold">, </span><span style="color: red">2165882425</span>L<span style="font-weight: bold">, </span><span style="color: red">2346928266</span>L<span style="font-weight: bold">, </span><span style="color: red">2892678711</span>L<span style="font-weight: bold">, </span><span style="color: red">2936066049</span>L<span style="font-weight: bold">, </span><span style="color: red">1316407868</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2873411858</span>L<span style="font-weight: bold">, </span><span style="color: red">4279682888</span>L<span style="font-weight: bold">, </span><span style="color: red">2744351923</span>L<span style="font-weight: bold">, </span><span style="color: red">3290373816</span>L<span style="font-weight: bold">, </span><span style="color: red">1014377279</span>L<span style="font-weight: bold">, </span><span style="color: red">955200944</span>L<span style="font-weight: bold">, </span><span style="color: red">4220990860</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2386098930</span>L<span style="font-weight: bold">, </span><span style="color: red">1772997650</span>L<span style="font-weight: bold">, </span><span style="color: red">3757346974</span>L<span style="font-weight: bold">, </span><span style="color: red">1621616438</span>L<span style="font-weight: bold">, </span><span style="color: red">2877097197</span>L<span style="font-weight: bold">, </span><span style="color: red">442116595</span>L<span style="font-weight: bold">, </span><span style="color: red">2010480266</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2867861469</span>L<span style="font-weight: bold">, </span><span style="color: red">2955352695</span>L<span style="font-weight: bold">, </span><span style="color: red">605335967</span>L<span style="font-weight: bold">, </span><span style="color: red">2222936009</span>L<span style="font-weight: bold">, </span><span style="color: red">2067554933</span>L<span style="font-weight: bold">, </span><span style="color: red">4129906358</span>L<span style="font-weight: bold">, </span><span style="color: red">1519608541</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1195006590</span>L<span style="font-weight: bold">, </span><span style="color: red">1942991038</span>L<span style="font-weight: bold">, </span><span style="color: red">2736562236</span>L<span style="font-weight: bold">, </span><span style="color: red">279162408</span>L<span style="font-weight: bold">, </span><span style="color: red">1415982909</span>L<span style="font-weight: bold">, </span><span style="color: red">4099901426</span>L<span style="font-weight: bold">, </span><span style="color: red">1732201505</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2934657937</span>L<span style="font-weight: bold">, </span><span style="color: red">860563237</span>L<span style="font-weight: bold">, </span><span style="color: red">2479235483</span>L<span style="font-weight: bold">, </span><span style="color: red">3081651097</span>L<span style="font-weight: bold">, </span><span style="color: red">2244720867</span>L<span style="font-weight: bold">, </span><span style="color: red">3112631622</span>L<span style="font-weight: bold">, </span><span style="color: red">1636991639</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3860393305</span>L<span style="font-weight: bold">, </span><span style="color: red">2312061927</span>L<span style="font-weight: bold">, </span><span style="color: red">48780114</span>L<span style="font-weight: bold">, </span><span style="color: red">1149090394</span>L<span style="font-weight: bold">, </span><span style="color: red">2643246550</span>L<span style="font-weight: bold">, </span><span style="color: red">1764050647</span>L<span style="font-weight: bold">, </span><span style="color: red">3836789087</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3474859076</span>L<span style="font-weight: bold">, </span><span style="color: red">4237194338</span>L<span style="font-weight: bold">, </span><span style="color: red">1735191073</span>L<span style="font-weight: bold">, </span><span style="color: red">2150369208</span>L<span style="font-weight: bold">, </span><span style="color: red">92164394</span>L<span style="font-weight: bold">, </span><span style="color: red">756974036</span>L<span style="font-weight: bold">, </span><span style="color: red">2314453957</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">323969533</span>L<span style="font-weight: bold">, </span><span style="color: red">4267621035</span>L<span style="font-weight: bold">, </span><span style="color: red">283649842</span>L<span style="font-weight: bold">, </span><span style="color: red">810004843</span>L<span style="font-weight: bold">, </span><span style="color: red">727855536</span>L<span style="font-weight: bold">, </span><span style="color: red">1757827251</span>L<span style="font-weight: bold">, </span><span style="color: red">3334960421</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3261035106</span>L<span style="font-weight: bold">, </span><span style="color: red">38417393</span>L<span style="font-weight: bold">, </span><span style="color: red">2660980472</span>L<span style="font-weight: bold">, </span><span style="color: red">1256633965</span>L<span style="font-weight: bold">, </span><span style="color: red">2184045390</span>L<span style="font-weight: bold">, </span><span style="color: red">811213141</span>L<span style="font-weight: bold">, </span><span style="color: red">2857482069</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2237770878</span>L<span style="font-weight: bold">, </span><span style="color: red">3891003138</span>L<span style="font-weight: bold">, </span><span style="color: red">2787806886</span>L<span style="font-weight: bold">, </span><span style="color: red">2435192790</span>L<span style="font-weight: bold">, </span><span style="color: red">2249324662</span>L<span style="font-weight: bold">, </span><span style="color: red">3507764896</span>L<span style="font-weight: bold">, </span><span style="color: red">995388363</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">856944153</span>L<span style="font-weight: bold">, </span><span style="color: red">619213904</span>L<span style="font-weight: bold">, </span><span style="color: red">3233967826</span>L<span style="font-weight: bold">, </span><span style="color: red">3703465555</span>L<span style="font-weight: bold">, </span><span style="color: red">3286531781</span>L<span style="font-weight: bold">, </span><span style="color: red">3863193356</span>L<span style="font-weight: bold">, </span><span style="color: red">2992340714</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">413696855</span>L<span style="font-weight: bold">, </span><span style="color: red">3865185632</span>L<span style="font-weight: bold">, </span><span style="color: red">1704163171</span>L<span style="font-weight: bold">, </span><span style="color: red">3043634452</span>L<span style="font-weight: bold">, </span><span style="color: red">2225424707</span>L<span style="font-weight: bold">, </span><span style="color: red">2199018022</span>L<span style="font-weight: bold">, </span><span style="color: red">3506117517</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3311559776</span>L<span style="font-weight: bold">, </span><span style="color: red">3374443561</span>L<span style="font-weight: bold">, </span><span style="color: red">1207829628</span>L<span style="font-weight: bold">, </span><span style="color: red">668793165</span>L<span style="font-weight: bold">, </span><span style="color: red">1822020716</span>L<span style="font-weight: bold">, </span><span style="color: red">2082656160</span>L<span style="font-weight: bold">, </span><span style="color: red">1160606415</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3034757648</span>L<span style="font-weight: bold">, </span><span style="color: red">741703672</span>L<span style="font-weight: bold">, </span><span style="color: red">3094328738</span>L<span style="font-weight: bold">, </span><span style="color: red">459332691</span>L<span style="font-weight: bold">, </span><span style="color: red">2702383376</span>L<span style="font-weight: bold">, </span><span style="color: red">1610239915</span>L<span style="font-weight: bold">, </span><span style="color: red">4162939394</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">557861574</span>L<span style="font-weight: bold">, </span><span style="color: red">3805706338</span>L<span style="font-weight: bold">, </span><span style="color: red">3832520705</span>L<span style="font-weight: bold">, </span><span style="color: red">1248934879</span>L<span style="font-weight: bold">, </span><span style="color: red">3250424034</span>L<span style="font-weight: bold">, </span><span style="color: red">892335058</span>L<span style="font-weight: bold">, </span><span style="color: red">74323433</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3209751608</span>L<span style="font-weight: bold">, </span><span style="color: red">3213220797</span>L<span style="font-weight: bold">, </span><span style="color: red">3444035873</span>L<span style="font-weight: bold">, </span><span style="color: red">3743886725</span>L<span style="font-weight: bold">, </span><span style="color: red">1783837251</span>L<span style="font-weight: bold">, </span><span style="color: red">610968664</span>L<span style="font-weight: bold">, </span><span style="color: red">580745246</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">4041979504</span>L<span style="font-weight: bold">, </span><span style="color: red">201684874</span>L<span style="font-weight: bold">, </span><span style="color: red">2673219253</span>L<span style="font-weight: bold">, </span><span style="color: red">1377283008</span>L<span style="font-weight: bold">, </span><span style="color: red">3497299167</span>L<span style="font-weight: bold">, </span><span style="color: red">2344209394</span>L<span style="font-weight: bold">, </span><span style="color: red">2304982920</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3081403782</span>L<span style="font-weight: bold">, </span><span style="color: red">2599256854</span>L<span style="font-weight: bold">, </span><span style="color: red">3184475235</span>L<span style="font-weight: bold">, </span><span style="color: red">3373055826</span>L<span style="font-weight: bold">, </span><span style="color: red">695186388</span>L<span style="font-weight: bold">, </span><span style="color: red">2423332338</span>L<span style="font-weight: bold">, </span><span style="color: red">222864327</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1258227992</span>L<span style="font-weight: bold">, </span><span style="color: red">3627871647</span>L<span style="font-weight: bold">, </span><span style="color: red">3487724980</span>L<span style="font-weight: bold">, </span><span style="color: red">4027953808</span>L<span style="font-weight: bold">, </span><span style="color: red">3053320360</span>L<span style="font-weight: bold">, </span><span style="color: red">533627073</span>L<span style="font-weight: bold">, </span><span style="color: red">3026232514</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2340271949</span>L<span style="font-weight: bold">, </span><span style="color: red">867277230</span>L<span style="font-weight: bold">, </span><span style="color: red">868513116</span>L<span style="font-weight: bold">, </span><span style="color: red">2158535651</span>L<span style="font-weight: bold">, </span><span style="color: red">2487822909</span>L<span style="font-weight: bold">, </span><span style="color: red">3428235761</span>L<span style="font-weight: bold">, </span><span style="color: red">3067196046</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3435119657</span>L<span style="font-weight: bold">, </span><span style="color: red">1908441839</span>L<span style="font-weight: bold">, </span><span style="color: red">788668797</span>L<span style="font-weight: bold">, </span><span style="color: red">3367703138</span>L<span style="font-weight: bold">, </span><span style="color: red">3317763187</span>L<span style="font-weight: bold">, </span><span style="color: red">908264443</span>L<span style="font-weight: bold">, </span><span style="color: red">2252100381</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">764223334</span>L<span style="font-weight: bold">, </span><span style="color: red">4127108988</span>L<span style="font-weight: bold">, </span><span style="color: red">384641349</span>L<span style="font-weight: bold">, </span><span style="color: red">3377374722</span>L<span style="font-weight: bold">, </span><span style="color: red">1263833251</span>L<span style="font-weight: bold">, </span><span style="color: red">1958694944</span>L<span style="font-weight: bold">, </span><span style="color: red">3847832657</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1253909612</span>L<span style="font-weight: bold">, </span><span style="color: red">1096494446</span>L<span style="font-weight: bold">, </span><span style="color: red">555725445</span>L<span style="font-weight: bold">, </span><span style="color: red">2277045895</span>L<span style="font-weight: bold">, </span><span style="color: red">3340096504</span>L<span style="font-weight: bold">, </span><span style="color: red">1383318686</span>L<span style="font-weight: bold">, </span><span style="color: red">4234428127</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1072582179</span>L<span style="font-weight: bold">, </span><span style="color: red">94169494</span>L<span style="font-weight: bold">, </span><span style="color: red">1064509968</span>L<span style="font-weight: bold">, </span><span style="color: red">2681151917</span>L<span style="font-weight: bold">, </span><span style="color: red">2681864920</span>L<span style="font-weight: bold">, </span><span style="color: red">734708852</span>L<span style="font-weight: bold">, </span><span style="color: red">1338914021</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1270409500</span>L<span style="font-weight: bold">, </span><span style="color: red">1789469116</span>L<span style="font-weight: bold">, </span><span style="color: red">4191988204</span>L<span style="font-weight: bold">, </span><span style="color: red">1716329784</span>L<span style="font-weight: bold">, </span><span style="color: red">2213764829</span>L<span style="font-weight: bold">, </span><span style="color: red">3712538840</span>L<span style="font-weight: bold">, </span><span style="color: red">919910444</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1318414447</span>L<span style="font-weight: bold">, </span><span style="color: red">3383806712</span>L<span style="font-weight: bold">, </span><span style="color: red">3054941722</span>L<span style="font-weight: bold">, </span><span style="color: red">3378649942</span>L<span style="font-weight: bold">, </span><span style="color: red">1205735655</span>L<span style="font-weight: bold">, </span><span style="color: red">1268136494</span>L<span style="font-weight: bold">, </span><span style="color: red">2214009444</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2532395133</span>L<span style="font-weight: bold">, </span><span style="color: red">3232230447</span>L<span style="font-weight: bold">, </span><span style="color: red">230294038</span>L<span style="font-weight: bold">, </span><span style="color: red">342599089</span>L<span style="font-weight: bold">, </span><span style="color: red">772808141</span>L<span style="font-weight: bold">, </span><span style="color: red">4096882234</span>L<span style="font-weight: bold">, </span><span style="color: red">3146662953</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2784264306</span>L<span style="font-weight: bold">, </span><span style="color: red">1860954704</span>L<span style="font-weight: bold">, </span><span style="color: red">2675279609</span>L<span style="font-weight: bold">, </span><span style="color: red">2984212876</span>L<span style="font-weight: bold">, </span><span style="color: red">2466966981</span>L<span style="font-weight: bold">, </span><span style="color: red">2627986059</span>L<span style="font-weight: bold">, </span><span style="color: red">2985545332</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2578042598</span>L<span style="font-weight: bold">, </span><span style="color: red">1458940786</span>L<span style="font-weight: bold">, </span><span style="color: red">2944243755</span>L<span style="font-weight: bold">, </span><span style="color: red">3959506256</span>L<span style="font-weight: bold">, </span><span style="color: red">1509151382</span>L<span style="font-weight: bold">, </span><span style="color: red">325761900</span>L<span style="font-weight: bold">, </span><span style="color: red">942251521</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">4184289782</span>L<span style="font-weight: bold">, </span><span style="color: red">2756231555</span>L<span style="font-weight: bold">, </span><span style="color: red">3297811774</span>L<span style="font-weight: bold">, </span><span style="color: red">1169708099</span>L<span style="font-weight: bold">, </span><span style="color: red">3280524138</span>L<span style="font-weight: bold">, </span><span style="color: red">3805245319</span>L<span style="font-weight: bold">, </span><span style="color: red">3227360276</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3199632491</span>L<span style="font-weight: bold">, </span><span style="color: red">2235795585</span>L<span style="font-weight: bold">, </span><span style="color: red">2865407118</span>L<span style="font-weight: bold">, </span><span style="color: red">36763651</span>L<span style="font-weight: bold">, </span><span style="color: red">2441503575</span>L<span style="font-weight: bold">, </span><span style="color: red">3314890374</span>L<span style="font-weight: bold">, </span><span style="color: red">1755526087</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">17915536</span>L<span style="font-weight: bold">, </span><span style="color: red">1196948233</span>L<span style="font-weight: bold">, </span><span style="color: red">949343045</span>L<span style="font-weight: bold">, </span><span style="color: red">3815841867</span>L<span style="font-weight: bold">, </span><span style="color: red">489007833</span>L<span style="font-weight: bold">, </span><span style="color: red">2654997597</span>L<span style="font-weight: bold">, </span><span style="color: red">2834744136</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">417688687</span>L<span style="font-weight: bold">, </span><span style="color: red">2843220846</span>L<span style="font-weight: bold">, </span><span style="color: red">85621843</span>L<span style="font-weight: bold">, </span><span style="color: red">747339336</span>L<span style="font-weight: bold">, </span><span style="color: red">2043645709</span>L<span style="font-weight: bold">, </span><span style="color: red">3520444394</span>L<span style="font-weight: bold">, </span><span style="color: red">1825470818</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">647778910</span>L<span style="font-weight: bold">, </span><span style="color: red">275904777</span>L<span style="font-weight: bold">, </span><span style="color: red">1249389189</span>L<span style="font-weight: bold">, </span><span style="color: red">3640887431</span>L<span style="font-weight: bold">, </span><span style="color: red">4200779599</span>L<span style="font-weight: bold">, </span><span style="color: red">323384601</span>L<span style="font-weight: bold">, </span><span style="color: red">3446088641</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">4049835786</span>L<span style="font-weight: bold">, </span><span style="color: red">1718989062</span>L<span style="font-weight: bold">, </span><span style="color: red">3563787136</span>L<span style="font-weight: bold">, </span><span style="color: red">44099190</span>L<span style="font-weight: bold">, </span><span style="color: red">3281263107</span>L<span style="font-weight: bold">, </span><span style="color: red">22910812</span>L<span style="font-weight: bold">, </span><span style="color: red">1826109246</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">745118154</span>L<span style="font-weight: bold">, </span><span style="color: red">3392171319</span>L<span style="font-weight: bold">, </span><span style="color: red">1571490704</span>L<span style="font-weight: bold">, </span><span style="color: red">354891067</span>L<span style="font-weight: bold">, </span><span style="color: red">815955642</span>L<span style="font-weight: bold">, </span><span style="color: red">1453450421</span>L<span style="font-weight: bold">, </span><span style="color: red">940015623</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">796817754</span>L<span style="font-weight: bold">, </span><span style="color: red">1260148619</span>L<span style="font-weight: bold">, </span><span style="color: red">3898237757</span>L<span style="font-weight: bold">, </span><span style="color: red">176670141</span>L<span style="font-weight: bold">, </span><span style="color: red">1870249326</span>L<span style="font-weight: bold">, </span><span style="color: red">3317738680</span>L<span style="font-weight: bold">, </span><span style="color: red">448918002</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">4059166594</span>L<span style="font-weight: bold">, </span><span style="color: red">2003827551</span>L<span style="font-weight: bold">, </span><span style="color: red">987091377</span>L<span style="font-weight: bold">, </span><span style="color: red">224855998</span>L<span style="font-weight: bold">, </span><span style="color: red">3520570137</span>L<span style="font-weight: bold">, </span><span style="color: red">789522610</span>L<span style="font-weight: bold">, </span><span style="color: red">2604445123</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">454472869</span>L<span style="font-weight: bold">, </span><span style="color: red">475688926</span>L<span style="font-weight: bold">, </span><span style="color: red">2990723466</span>L<span style="font-weight: bold">, </span><span style="color: red">523362238</span>L<span style="font-weight: bold">, </span><span style="color: red">3897608102</span>L<span style="font-weight: bold">, </span><span style="color: red">806637149</span>L<span style="font-weight: bold">, </span><span style="color: red">2642229586</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2928614432</span>L<span style="font-weight: bold">, </span><span style="color: red">1564415411</span>L<span style="font-weight: bold">, </span><span style="color: red">1691381054</span>L<span style="font-weight: bold">, </span><span style="color: red">3816907227</span>L<span style="font-weight: bold">, </span><span style="color: red">4082581003</span>L<span style="font-weight: bold">, </span><span style="color: red">1895544448</span>L<span style="font-weight: bold">, </span><span style="color: red">3728217394</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3214813157</span>L<span style="font-weight: bold">, </span><span style="color: red">4054301607</span>L<span style="font-weight: bold">, </span><span style="color: red">1882632454</span>L<span style="font-weight: bold">, </span><span style="color: red">2873728645</span>L<span style="font-weight: bold">, </span><span style="color: red">3694943071</span>L<span style="font-weight: bold">, </span><span style="color: red">1297991732</span>L<span style="font-weight: bold">, </span><span style="color: red">2101682438</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3952579552</span>L<span style="font-weight: bold">, </span><span style="color: red">678650400</span>L<span style="font-weight: bold">, </span><span style="color: red">1391722293</span>L<span style="font-weight: bold">, </span><span style="color: red">478833748</span>L<span style="font-weight: bold">, </span><span style="color: red">2976468591</span>L<span style="font-weight: bold">, </span><span style="color: red">158586606</span>L<span style="font-weight: bold">, </span><span style="color: red">2576499787</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">662690848</span>L<span style="font-weight: bold">, </span><span style="color: red">3799889765</span>L<span style="font-weight: bold">, </span><span style="color: red">3328894692</span>L<span style="font-weight: bold">, </span><span style="color: red">2474578497</span>L<span style="font-weight: bold">, </span><span style="color: red">2383901391</span>L<span style="font-weight: bold">, </span><span style="color: red">1718193504</span>L<span style="font-weight: bold">, </span><span style="color: red">3003184595</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3630561213</span>L<span style="font-weight: bold">, </span><span style="color: red">1929441113</span>L<span style="font-weight: bold">, </span><span style="color: red">3848238627</span>L<span style="font-weight: bold">, </span><span style="color: red">1594310094</span>L<span style="font-weight: bold">, </span><span style="color: red">3040359840</span>L<span style="font-weight: bold">, </span><span style="color: red">3051803867</span>L<span style="font-weight: bold">, </span><span style="color: red">2462788790</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">954409915</span>L<span style="font-weight: bold">, </span><span style="color: red">802581771</span>L<span style="font-weight: bold">, </span><span style="color: red">681703307</span>L<span style="font-weight: bold">, </span><span style="color: red">545982392</span>L<span style="font-weight: bold">, </span><span style="color: red">2738993819</span>L<span style="font-weight: bold">, </span><span style="color: red">8025358</span>L<span style="font-weight: bold">, </span><span style="color: red">2827719383</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">770471093</span>L<span style="font-weight: bold">, </span><span style="color: red">3484895980</span>L<span style="font-weight: bold">, </span><span style="color: red">3111306320</span>L<span style="font-weight: bold">, </span><span style="color: red">3900000891</span>L<span style="font-weight: bold">, </span><span style="color: red">2116916652</span>L<span style="font-weight: bold">, </span><span style="color: red">397746721</span>L<span style="font-weight: bold">, </span><span style="color: red">2087689510</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">721433935</span>L<span style="font-weight: bold">, </span><span style="color: red">1396088885</span>L<span style="font-weight: bold">, </span><span style="color: red">2751612384</span>L<span style="font-weight: bold">, </span><span style="color: red">1998988613</span>L<span style="font-weight: bold">, </span><span style="color: red">2135074843</span>L<span style="font-weight: bold">, </span><span style="color: red">2521131298</span>L<span style="font-weight: bold">, </span><span style="color: red">707009172</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2398321482</span>L<span style="font-weight: bold">, </span><span style="color: red">688041159</span>L<span style="font-weight: bold">, </span><span style="color: red">2264560137</span>L<span style="font-weight: bold">, </span><span style="color: red">482388305</span>L<span style="font-weight: bold">, </span><span style="color: red">207864885</span>L<span style="font-weight: bold">, </span><span style="color: red">3735036991</span>L<span style="font-weight: bold">, </span><span style="color: red">3490348331</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1963642811</span>L<span style="font-weight: bold">, </span><span style="color: red">3260224305</span>L<span style="font-weight: bold">, </span><span style="color: red">3493564223</span>L<span style="font-weight: bold">, </span><span style="color: red">1939428454</span>L<span style="font-weight: bold">, </span><span style="color: red">1128799656</span>L<span style="font-weight: bold">, </span><span style="color: red">1366012432</span>L<span style="font-weight: bold">, </span><span style="color: red">2858822447</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1428147157</span>L<span style="font-weight: bold">, </span><span style="color: red">2261125391</span>L<span style="font-weight: bold">, </span><span style="color: red">1611208390</span>L<span style="font-weight: bold">, </span><span style="color: red">1134826333</span>L<span style="font-weight: bold">, </span><span style="color: red">2374102525</span>L<span style="font-weight: bold">, </span><span style="color: red">3833625209</span>L<span style="font-weight: bold">, </span><span style="color: red">2266397263</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3189115077</span>L<span style="font-weight: bold">, </span><span style="color: red">770080230</span>L<span style="font-weight: bold">, </span><span style="color: red">2674657172</span>L<span style="font-weight: bold">, </span><span style="color: red">4280146640</span>L<span style="font-weight: bold">, </span><span style="color: red">3604531615</span>L<span style="font-weight: bold">, </span><span style="color: red">4235071805</span>L<span style="font-weight: bold">, </span><span style="color: red">3436987249</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">509704467</span>L<span style="font-weight: bold">, </span><span style="color: red">2582695198</span>L<span style="font-weight: bold">, </span><span style="color: red">4256268040</span>L<span style="font-weight: bold">, </span><span style="color: red">3391197562</span>L<span style="font-weight: bold">, </span><span style="color: red">1460642842</span>L<span style="font-weight: bold">, </span><span style="color: red">1617931012</span>L<span style="font-weight: bold">, </span><span style="color: red">457825497</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1031452907</span>L<span style="font-weight: bold">, </span><span style="color: red">1330422862</span>L<span style="font-weight: bold">, </span><span style="color: red">4125947620</span>L<span style="font-weight: bold">, </span><span style="color: red">2280712485</span>L<span style="font-weight: bold">, </span><span style="color: red">431892090</span>L<span style="font-weight: bold">, </span><span style="color: red">2387410588</span>L<span style="font-weight: bold">, </span><span style="color: red">2061126784</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">896457479</span>L<span style="font-weight: bold">, </span><span style="color: red">3480499461</span>L<span style="font-weight: bold">, </span><span style="color: red">2488196663</span>L<span style="font-weight: bold">, </span><span style="color: red">4021103792</span>L<span style="font-weight: bold">, </span><span style="color: red">1877063114</span>L<span style="font-weight: bold">, </span><span style="color: red">2744470201</span>L<span style="font-weight: bold">, </span><span style="color: red">1046140599</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2129952955</span>L<span style="font-weight: bold">, </span><span style="color: red">3583049218</span>L<span style="font-weight: bold">, </span><span style="color: red">4217723693</span>L<span style="font-weight: bold">, </span><span style="color: red">2720341743</span>L<span style="font-weight: bold">, </span><span style="color: red">820661843</span>L<span style="font-weight: bold">, </span><span style="color: red">1079873609</span>L<span style="font-weight: bold">, </span><span style="color: red">3360954200</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3652304997</span>L<span style="font-weight: bold">, </span><span style="color: red">3335838575</span>L<span style="font-weight: bold">, </span><span style="color: red">2178810636</span>L<span style="font-weight: bold">, </span><span style="color: red">1908053374</span>L<span style="font-weight: bold">, </span><span style="color: red">4026721976</span>L<span style="font-weight: bold">, </span><span style="color: red">1793145418</span>L<span style="font-weight: bold">, </span><span style="color: red">476541615</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">973420250</span>L<span style="font-weight: bold">, </span><span style="color: red">515553040</span>L<span style="font-weight: bold">, </span><span style="color: red">919292001</span>L<span style="font-weight: bold">, </span><span style="color: red">2601786155</span>L<span style="font-weight: bold">, </span><span style="color: red">1685119450</span>L<span style="font-weight: bold">, </span><span style="color: red">3030170809</span>L<span style="font-weight: bold">, </span><span style="color: red">1590676150</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1665099167</span>L<span style="font-weight: bold">, </span><span style="color: red">651151584</span>L<span style="font-weight: bold">, </span><span style="color: red">2077190587</span>L<span style="font-weight: bold">, </span><span style="color: red">957892642</span>L<span style="font-weight: bold">, </span><span style="color: red">646336572</span>L<span style="font-weight: bold">, </span><span style="color: red">2743719258</span>L<span style="font-weight: bold">, </span><span style="color: red">866169074</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">851118829</span>L<span style="font-weight: bold">, </span><span style="color: red">4225766285</span>L<span style="font-weight: bold">, </span><span style="color: red">963748226</span>L<span style="font-weight: bold">, </span><span style="color: red">799549420</span>L<span style="font-weight: bold">, </span><span style="color: red">1955032629</span>L<span style="font-weight: bold">, </span><span style="color: red">799460000</span>L<span style="font-weight: bold">, </span><span style="color: red">2425744063</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2441291571</span>L<span style="font-weight: bold">, </span><span style="color: red">1928963772</span>L<span style="font-weight: bold">, </span><span style="color: red">528930629</span>L<span style="font-weight: bold">, </span><span style="color: red">2591962884</span>L<span style="font-weight: bold">, </span><span style="color: red">3495142819</span>L<span style="font-weight: bold">, </span><span style="color: red">1896021824</span>L<span style="font-weight: bold">, </span><span style="color: red">901320159</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3181820243</span>L<span style="font-weight: bold">, </span><span style="color: red">843061941</span>L<span style="font-weight: bold">, </span><span style="color: red">3338628510</span>L<span style="font-weight: bold">, </span><span style="color: red">3782438992</span>L<span style="font-weight: bold">, </span><span style="color: red">9515330</span>L<span style="font-weight: bold">, </span><span style="color: red">1705797226</span>L<span style="font-weight: bold">, </span><span style="color: red">953535929</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">764833876</span>L<span style="font-weight: bold">, </span><span style="color: red">3202464965</span>L<span style="font-weight: bold">, </span><span style="color: red">2970244591</span>L<span style="font-weight: bold">, </span><span style="color: red">519154982</span>L<span style="font-weight: bold">, </span><span style="color: red">3390617541</span>L<span style="font-weight: bold">, </span><span style="color: red">566616744</span>L<span style="font-weight: bold">, </span><span style="color: red">3438031503</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1853838297</span>L<span style="font-weight: bold">, </span><span style="color: red">170608755</span>L<span style="font-weight: bold">, </span><span style="color: red">1393728434</span>L<span style="font-weight: bold">, </span><span style="color: red">676900116</span>L<span style="font-weight: bold">, </span><span style="color: red">3184965776</span>L<span style="font-weight: bold">, </span><span style="color: red">1843100290</span>L<span style="font-weight: bold">, </span><span style="color: red">78995357</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2227939888</span>L<span style="font-weight: bold">, </span><span style="color: red">3460264600</span>L<span style="font-weight: bold">, </span><span style="color: red">1745705055</span>L<span style="font-weight: bold">, </span><span style="color: red">1474086965</span>L<span style="font-weight: bold">, </span><span style="color: red">572796246</span>L<span style="font-weight: bold">, </span><span style="color: red">4081303004</span>L<span style="font-weight: bold">, </span><span style="color: red">882828851</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1295445825</span>L<span style="font-weight: bold">, </span><span style="color: red">137639900</span>L<span style="font-weight: bold">, </span><span style="color: red">3304579600</span>L<span style="font-weight: bold">, </span><span style="color: red">2722437017</span>L<span style="font-weight: bold">, </span><span style="color: red">4093422709</span>L<span style="font-weight: bold">, </span><span style="color: red">273203373</span>L<span style="font-weight: bold">, </span><span style="color: red">2666507854</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3998836510</span>L<span style="font-weight: bold">, </span><span style="color: red">493829981</span>L<span style="font-weight: bold">, </span><span style="color: red">1623949669</span>L<span style="font-weight: bold">, </span><span style="color: red">3482036755</span>L<span style="font-weight: bold">, </span><span style="color: red">3390023939</span>L<span style="font-weight: bold">, </span><span style="color: red">833233937</span>L<span style="font-weight: bold">, </span><span style="color: red">1639668730</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1499455075</span>L<span style="font-weight: bold">, </span><span style="color: red">249728260</span>L<span style="font-weight: bold">, </span><span style="color: red">1210694006</span>L<span style="font-weight: bold">, </span><span style="color: red">3836497489</span>L<span style="font-weight: bold">, </span><span style="color: red">1551488720</span>L<span style="font-weight: bold">, </span><span style="color: red">3253074267</span>L<span style="font-weight: bold">, </span><span style="color: red">3388238003</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">2372035079</span>L<span style="font-weight: bold">, </span><span style="color: red">3945715164</span>L<span style="font-weight: bold">, </span><span style="color: red">2029501215</span>L<span style="font-weight: bold">, </span><span style="color: red">3362012634</span>L<span style="font-weight: bold">, </span><span style="color: red">2007375355</span>L<span style="font-weight: bold">, </span><span style="color: red">4074709820</span>L<span style="font-weight: bold">, </span><span style="color: red">631485888</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3135015769</span>L<span style="font-weight: bold">, </span><span style="color: red">4273087084</span>L<span style="font-weight: bold">, </span><span style="color: red">3648076204</span>L<span style="font-weight: bold">, </span><span style="color: red">2739943601</span>L<span style="font-weight: bold">, </span><span style="color: red">1374020358</span>L<span style="font-weight: bold">, </span><span style="color: red">1760722448</span>L<span style="font-weight: bold">, </span><span style="color: red">3773939706</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1313027823</span>L<span style="font-weight: bold">, </span><span style="color: red">1895251226</span>L<span style="font-weight: bold">, </span><span style="color: red">4224465911</span>L<span style="font-weight: bold">, </span><span style="color: red">421382535</span>L<span style="font-weight: bold">, </span><span style="color: red">1141067370</span>L<span style="font-weight: bold">, </span><span style="color: red">3660034846</span>L<span style="font-weight: bold">, </span><span style="color: red">3393185650</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">1850995280</span>L<span style="font-weight: bold">, </span><span style="color: red">1451917312</span>L<span style="font-weight: bold">, </span><span style="color: red">3841455409</span>L<span style="font-weight: bold">, </span><span style="color: red">3926840308</span>L<span style="font-weight: bold">, </span><span style="color: red">1397397252</span>L<span style="font-weight: bold">, </span><span style="color: red">2572864479</span>L<span style="font-weight: bold">, </span><span style="color: red">2500171350</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3119920613</span>L<span style="font-weight: bold">, </span><span style="color: red">531400869</span>L<span style="font-weight: bold">, </span><span style="color: red">1626487579</span>L<span style="font-weight: bold">, </span><span style="color: red">1099320497</span>L<span style="font-weight: bold">, </span><span style="color: red">407414753</span>L<span style="font-weight: bold">, </span><span style="color: red">2438623324</span>L<span style="font-weight: bold">, </span><span style="color: red">99073255</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">3175491512</span>L<span style="font-weight: bold">, </span><span style="color: red">656431560</span>L<span style="font-weight: bold">, </span><span style="color: red">1153671785</span>L<span style="font-weight: bold">, </span><span style="color: red">236307875</span>L<span style="font-weight: bold">, </span><span style="color: red">2824738046</span>L<span style="font-weight: bold">, </span><span style="color: red">2320621382</span>L<span style="font-weight: bold">, </span><span style="color: red">892174056</span>L<span style="font-weight: bold">, </span>\
+            <span style="color: red">230984053</span>L<span style="font-weight: bold">, </span><span style="color: red">719791226</span>L<span style="font-weight: bold">, </span><span style="color: red">2718891946</span>L<span style="font-weight: bold">, </span><span style="color: red">624</span>L<span style="font-weight: bold">), </span><span style="color: blue">None</span><span style="font-weight: bold">)
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>random <span style="font-weight: bold">= </span>random<span style="font-weight: bold">.</span>Random<span style="font-weight: bold">()
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>random<span style="font-weight: bold">.</span>setstate<span style="font-weight: bold">(</span>fixedState<span style="font-weight: bold">)
+
+</span><span style="color: darkred">"""
+ Data structures useful for implementing SearchAgents
+"""
+
+</span><span style="color: blue; font-weight: bold">class </span>Stack<span style="font-weight: bold">:
+    </span><span style="color: red">"A container with a last-in-first-out (LIFO) queuing policy."
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list <span style="font-weight: bold">= []
+
+    </span><span style="color: blue; font-weight: bold">def </span>push<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">,</span>item<span style="font-weight: bold">):
+        </span><span style="color: red">"Push 'item' onto the stack"
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list<span style="font-weight: bold">.</span>append<span style="font-weight: bold">(</span>item<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>pop<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: red">"Pop the most recently pushed item from the stack"
+        </span><span style="color: blue; font-weight: bold">return </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list<span style="font-weight: bold">.</span>pop<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>isEmpty<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: red">"Returns true if the stack is empty"
+        </span><span style="color: blue; font-weight: bold">return </span>len<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list<span style="font-weight: bold">) == </span><span style="color: red">0
+
+</span><span style="color: blue; font-weight: bold">class </span>Queue<span style="font-weight: bold">:
+    </span><span style="color: red">"A container with a first-in-first-out (FIFO) queuing policy."
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list <span style="font-weight: bold">= []
+
+    </span><span style="color: blue; font-weight: bold">def </span>push<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">,</span>item<span style="font-weight: bold">):
+        </span><span style="color: red">"Enqueue the 'item' into the queue"
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list<span style="font-weight: bold">.</span>insert<span style="font-weight: bold">(</span><span style="color: red">0</span><span style="font-weight: bold">,</span>item<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>pop<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+          Dequeue the earliest enqueued item still in the queue. This
+          operation removes the item from the queue.
+        """
+        </span><span style="color: blue; font-weight: bold">return </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list<span style="font-weight: bold">.</span>pop<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>isEmpty<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: red">"Returns true if the queue is empty"
+        </span><span style="color: blue; font-weight: bold">return </span>len<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>list<span style="font-weight: bold">) == </span><span style="color: red">0
+
+</span><span style="color: blue; font-weight: bold">class </span>PriorityQueue<span style="font-weight: bold">:
+    </span><span style="color: darkred">"""
+      Implements a priority queue data structure. Each inserted item
+      has a priority associated with it and the client is usually interested
+      in quick retrieval of the lowest-priority item in the queue. This
+      data structure allows O(1) access to the lowest-priority item.
+
+      Note that this PriorityQueue does not allow you to change the priority
+      of an item.  However, you may insert the same item multiple times with
+      different priorities.
+    """
+    </span><span style="color: blue; font-weight: bold">def  </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>heap <span style="font-weight: bold">= []
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>count <span style="font-weight: bold">= </span><span style="color: red">0
+
+    </span><span style="color: blue; font-weight: bold">def </span>push<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>item<span style="font-weight: bold">, </span>priority<span style="font-weight: bold">):
+        </span><span style="color: green; font-style: italic"># FIXME: restored old behaviour to check against old results better
+        # FIXED: restored to stable behaviour
+        </span>entry <span style="font-weight: bold">= (</span>priority<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>count<span style="font-weight: bold">, </span>item<span style="font-weight: bold">)
+        </span><span style="color: green; font-style: italic"># entry = (priority, item)
+        </span>heapq<span style="font-weight: bold">.</span>heappush<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>heap<span style="font-weight: bold">, </span>entry<span style="font-weight: bold">)
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>count <span style="font-weight: bold">+= </span><span style="color: red">1
+
+    </span><span style="color: blue; font-weight: bold">def </span>pop<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        (</span>_<span style="font-weight: bold">, </span>_<span style="font-weight: bold">, </span>item<span style="font-weight: bold">) = </span>heapq<span style="font-weight: bold">.</span>heappop<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>heap<span style="font-weight: bold">)
+        </span><span style="color: green; font-style: italic">#  (_, item) = heapq.heappop(self.heap)
+        </span><span style="color: blue; font-weight: bold">return </span>item
+
+    <span style="color: blue; font-weight: bold">def </span>isEmpty<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span>len<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>heap<span style="font-weight: bold">) == </span><span style="color: red">0
+
+</span><span style="color: blue; font-weight: bold">class </span>PriorityQueueWithFunction<span style="font-weight: bold">(</span>PriorityQueue<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    Implements a priority queue with the same push/pop signature of the
+    Queue and the Stack classes. This is designed for drop-in replacement for
+    those two classes. The caller has to provide a priority function, which
+    extracts each item's priority.
+    """
+    </span><span style="color: blue; font-weight: bold">def  </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>priorityFunction<span style="font-weight: bold">):
+        </span><span style="color: red">"priorityFunction (item) -&gt; priority"
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>priorityFunction <span style="font-weight: bold">= </span>priorityFunction      <span style="color: green; font-style: italic"># store the priority function
+        </span>PriorityQueue<span style="font-weight: bold">.</span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">)        </span><span style="color: green; font-style: italic"># super-class initializer
+
+    </span><span style="color: blue; font-weight: bold">def </span>push<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>item<span style="font-weight: bold">):
+        </span><span style="color: red">"Adds an item to the queue with priority from the priority function"
+        </span>PriorityQueue<span style="font-weight: bold">.</span>push<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>item<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>priorityFunction<span style="font-weight: bold">(</span>item<span style="font-weight: bold">))
+
+
+</span><span style="color: blue; font-weight: bold">def </span>manhattanDistance<span style="font-weight: bold">( </span>xy1<span style="font-weight: bold">, </span>xy2 <span style="font-weight: bold">):
+    </span><span style="color: red">"Returns the Manhattan distance between points xy1 and xy2"
+    </span><span style="color: blue; font-weight: bold">return </span>abs<span style="font-weight: bold">( </span>xy1<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] - </span>xy2<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] ) + </span>abs<span style="font-weight: bold">( </span>xy1<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] - </span>xy2<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] )
+
+</span><span style="color: darkred">"""
+  Data structures and functions useful for various course projects
+
+  The search project should not need anything below this line.
+"""
+
+</span><span style="color: blue; font-weight: bold">class </span>Counter<span style="font-weight: bold">(</span>dict<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    A counter keeps track of counts for a set of keys.
+
+    The counter class is an extension of the standard python
+    dictionary type.  It is specialized to have number values
+    (integers or floats), and includes a handful of additional
+    functions to ease the task of counting data.  In particular,
+    all keys are defaulted to have value 0.  Using a dictionary:
+
+    a = {}
+    print a['test']
+
+    would give an error, while the Counter class analogue:
+
+    &gt;&gt;&gt; a = Counter()
+    &gt;&gt;&gt; print a['test']
+    0
+
+    returns the default 0 value. Note that to reference a key
+    that you know is contained in the counter,
+    you can still use the dictionary syntax:
+
+    &gt;&gt;&gt; a = Counter()
+    &gt;&gt;&gt; a['test'] = 2
+    &gt;&gt;&gt; print a['test']
+    2
+
+    This is very useful for counting things without initializing their counts,
+    see for example:
+
+    &gt;&gt;&gt; a['blah'] += 1
+    &gt;&gt;&gt; print a['blah']
+    1
+
+    The counter also includes additional functionality useful in implementing
+    the classifiers for this assignment.  Two counters can be added,
+    subtracted or multiplied together.  See below for details.  They can
+    also be normalized and their total count and arg max can be extracted.
+    """
+    </span><span style="color: blue; font-weight: bold">def </span>__getitem__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>idx<span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>setdefault<span style="font-weight: bold">(</span>idx<span style="font-weight: bold">, </span><span style="color: red">0</span><span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">return </span>dict<span style="font-weight: bold">.</span>__getitem__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>idx<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>incrementAll<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>keys<span style="font-weight: bold">, </span>count<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Increments all elements of keys by the same count.
+
+        &gt;&gt;&gt; a = Counter()
+        &gt;&gt;&gt; a.incrementAll(['one','two', 'three'], 1)
+        &gt;&gt;&gt; a['one']
+        1
+        &gt;&gt;&gt; a['two']
+        1
+        """
+        </span><span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span>keys<span style="font-weight: bold">:
+            </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">] += </span>count
+
+    <span style="color: blue; font-weight: bold">def </span>argMax<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns the key with the highest value.
+        """
+        </span><span style="color: blue; font-weight: bold">if </span>len<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>keys<span style="font-weight: bold">()) == </span><span style="color: red">0</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return </span><span style="color: blue">None
+        </span>all <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>items<span style="font-weight: bold">()
+        </span>values <span style="font-weight: bold">= [</span>x<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] </span><span style="color: blue; font-weight: bold">for </span>x <span style="color: blue; font-weight: bold">in </span>all<span style="font-weight: bold">]
+        </span>maxIndex <span style="font-weight: bold">= </span>values<span style="font-weight: bold">.</span>index<span style="font-weight: bold">(</span>max<span style="font-weight: bold">(</span>values<span style="font-weight: bold">))
+        </span><span style="color: blue; font-weight: bold">return </span>all<span style="font-weight: bold">[</span>maxIndex<span style="font-weight: bold">][</span><span style="color: red">0</span><span style="font-weight: bold">]
+
+    </span><span style="color: blue; font-weight: bold">def </span>sortedKeys<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns a list of keys sorted by their values.  Keys
+        with the highest values will appear first.
+
+        &gt;&gt;&gt; a = Counter()
+        &gt;&gt;&gt; a['first'] = -2
+        &gt;&gt;&gt; a['second'] = 4
+        &gt;&gt;&gt; a['third'] = 1
+        &gt;&gt;&gt; a.sortedKeys()
+        ['second', 'third', 'first']
+        """
+        </span>sortedItems <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>items<span style="font-weight: bold">()
+        </span>compare <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>x<span style="font-weight: bold">, </span>y<span style="font-weight: bold">:  </span>sign<span style="font-weight: bold">(</span>y<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] - </span>x<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">])
+        </span>sortedItems<span style="font-weight: bold">.</span>sort<span style="font-weight: bold">(</span>cmp<span style="font-weight: bold">=</span>compare<span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">return </span><span style="font-weight: bold">[</span>x<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] </span><span style="color: blue; font-weight: bold">for </span>x <span style="color: blue; font-weight: bold">in </span>sortedItems<span style="font-weight: bold">]
+
+    </span><span style="color: blue; font-weight: bold">def </span>totalCount<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns the sum of counts for all keys.
+        """
+        </span><span style="color: blue; font-weight: bold">return </span>sum<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>values<span style="font-weight: bold">())
+
+    </span><span style="color: blue; font-weight: bold">def </span>normalize<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Edits the counter such that the total count of all
+        keys sums to 1.  The ratio of counts for all keys
+        will remain the same. Note that normalizing an empty
+        Counter will result in an error.
+        """
+        </span>total <span style="font-weight: bold">= </span>float<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>totalCount<span style="font-weight: bold">())
+        </span><span style="color: blue; font-weight: bold">if </span>total <span style="font-weight: bold">== </span><span style="color: red">0</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return
+        for </span>key <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>keys<span style="font-weight: bold">():
+            </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">] / </span>total
+
+    <span style="color: blue; font-weight: bold">def </span>divideAll<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>divisor<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Divides all counts by divisor
+        """
+        </span>divisor <span style="font-weight: bold">= </span>float<span style="font-weight: bold">(</span>divisor<span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">:
+            </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">] /= </span>divisor
+
+    <span style="color: blue; font-weight: bold">def </span>copy<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns a copy of the counter
+        """
+        </span><span style="color: blue; font-weight: bold">return </span>Counter<span style="font-weight: bold">(</span>dict<span style="font-weight: bold">.</span>copy<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">))
+
+    </span><span style="color: blue; font-weight: bold">def </span>__mul__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>y <span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Multiplying two counters gives the dot product of their vectors where
+        each unique label is a vector element.
+
+        &gt;&gt;&gt; a = Counter()
+        &gt;&gt;&gt; b = Counter()
+        &gt;&gt;&gt; a['first'] = -2
+        &gt;&gt;&gt; a['second'] = 4
+        &gt;&gt;&gt; b['first'] = 3
+        &gt;&gt;&gt; b['second'] = 5
+        &gt;&gt;&gt; a['third'] = 1.5
+        &gt;&gt;&gt; a['fourth'] = 2.5
+        &gt;&gt;&gt; a * b
+        14
+        """
+        </span>sum <span style="font-weight: bold">= </span><span style="color: red">0
+        </span>x <span style="font-weight: bold">= </span><span style="color: blue">self
+        </span><span style="color: blue; font-weight: bold">if </span>len<span style="font-weight: bold">(</span>x<span style="font-weight: bold">) &gt; </span>len<span style="font-weight: bold">(</span>y<span style="font-weight: bold">):
+            </span>x<span style="font-weight: bold">,</span>y <span style="font-weight: bold">= </span>y<span style="font-weight: bold">,</span>x
+        <span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span>x<span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">if </span>key <span style="color: blue; font-weight: bold">not in </span>y<span style="font-weight: bold">:
+                </span><span style="color: blue; font-weight: bold">continue
+            </span>sum <span style="font-weight: bold">+= </span>x<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] * </span>y<span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">return </span>sum
+
+    <span style="color: blue; font-weight: bold">def </span>__radd__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>y<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Adding another counter to a counter increments the current counter
+        by the values stored in the second counter.
+
+        &gt;&gt;&gt; a = Counter()
+        &gt;&gt;&gt; b = Counter()
+        &gt;&gt;&gt; a['first'] = -2
+        &gt;&gt;&gt; a['second'] = 4
+        &gt;&gt;&gt; b['first'] = 3
+        &gt;&gt;&gt; b['third'] = 1
+        &gt;&gt;&gt; a += b
+        &gt;&gt;&gt; a['first']
+        1
+        """
+        </span><span style="color: blue; font-weight: bold">for </span>key<span style="font-weight: bold">, </span>value <span style="color: blue; font-weight: bold">in </span>y<span style="font-weight: bold">.</span>items<span style="font-weight: bold">():
+            </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">] += </span>value
+
+    <span style="color: blue; font-weight: bold">def </span>__add__<span style="font-weight: bold">( </span><span style="color: blue">self</span><span style="font-weight: bold">, </span>y <span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Adding two counters gives a counter with the union of all keys and
+        counts of the second added to counts of the first.
+
+        &gt;&gt;&gt; a = Counter()
+        &gt;&gt;&gt; b = Counter()
+        &gt;&gt;&gt; a['first'] = -2
+        &gt;&gt;&gt; a['second'] = 4
+        &gt;&gt;&gt; b['first'] = 3
+        &gt;&gt;&gt; b['third'] = 1
+        &gt;&gt;&gt; (a + b)['first']
+        1
+        """
+        </span>addend <span style="font-weight: bold">= </span>Counter<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">if </span>key <span style="color: blue; font-weight: bold">in </span>y<span style="font-weight: bold">:
+                </span>addend<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">] + </span>y<span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+            </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+                </span>addend<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span>y<span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">if </span>key <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">:
+                </span><span style="color: blue; font-weight: bold">continue
+            </span>addend<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = </span>y<span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">return </span>addend
+
+    <span style="color: blue; font-weight: bold">def </span>__sub__<span style="font-weight: bold">( </span><span style="color: blue">self</span><span style="font-weight: bold">, </span>y <span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Subtracting a counter from another gives a counter with the union of all keys and
+        counts of the second subtracted from counts of the first.
+
+        &gt;&gt;&gt; a = Counter()
+        &gt;&gt;&gt; b = Counter()
+        &gt;&gt;&gt; a['first'] = -2
+        &gt;&gt;&gt; a['second'] = 4
+        &gt;&gt;&gt; b['first'] = 3
+        &gt;&gt;&gt; b['third'] = 1
+        &gt;&gt;&gt; (a - b)['first']
+        -5
+        """
+        </span>addend <span style="font-weight: bold">= </span>Counter<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">if </span>key <span style="color: blue; font-weight: bold">in </span>y<span style="font-weight: bold">:
+                </span>addend<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">] - </span>y<span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+            </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+                </span>addend<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = </span><span style="color: blue">self</span><span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span>y<span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">if </span>key <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">:
+                </span><span style="color: blue; font-weight: bold">continue
+            </span>addend<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = -</span><span style="color: red">1 </span><span style="font-weight: bold">* </span>y<span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">return </span>addend
+
+<span style="color: blue; font-weight: bold">def </span>raiseNotDefined<span style="font-weight: bold">():
+    </span>fileName <span style="font-weight: bold">= </span>inspect<span style="font-weight: bold">.</span>stack<span style="font-weight: bold">()[</span><span style="color: red">1</span><span style="font-weight: bold">][</span><span style="color: red">1</span><span style="font-weight: bold">]
+    </span>line <span style="font-weight: bold">= </span>inspect<span style="font-weight: bold">.</span>stack<span style="font-weight: bold">()[</span><span style="color: red">1</span><span style="font-weight: bold">][</span><span style="color: red">2</span><span style="font-weight: bold">]
+    </span>method <span style="font-weight: bold">= </span>inspect<span style="font-weight: bold">.</span>stack<span style="font-weight: bold">()[</span><span style="color: red">1</span><span style="font-weight: bold">][</span><span style="color: red">3</span><span style="font-weight: bold">]
+
+    </span><span style="color: blue; font-weight: bold">print </span><span style="color: red">"*** Method not implemented: %s at line %s of %s" </span><span style="font-weight: bold">% (</span>method<span style="font-weight: bold">, </span>line<span style="font-weight: bold">, </span>fileName<span style="font-weight: bold">)
+    </span>sys<span style="font-weight: bold">.</span>exit<span style="font-weight: bold">(</span><span style="color: red">1</span><span style="font-weight: bold">)
+
+</span><span style="color: blue; font-weight: bold">def </span>normalize<span style="font-weight: bold">(</span>vectorOrCounter<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    normalize a vector or counter by dividing each value by the sum of all values
+    """
+    </span>normalizedCounter <span style="font-weight: bold">= </span>Counter<span style="font-weight: bold">()
+    </span><span style="color: blue; font-weight: bold">if </span>type<span style="font-weight: bold">(</span>vectorOrCounter<span style="font-weight: bold">) == </span>type<span style="font-weight: bold">(</span>normalizedCounter<span style="font-weight: bold">):
+        </span>counter <span style="font-weight: bold">= </span>vectorOrCounter
+        total <span style="font-weight: bold">= </span>float<span style="font-weight: bold">(</span>counter<span style="font-weight: bold">.</span>totalCount<span style="font-weight: bold">())
+        </span><span style="color: blue; font-weight: bold">if </span>total <span style="font-weight: bold">== </span><span style="color: red">0</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return </span>counter
+        <span style="color: blue; font-weight: bold">for </span>key <span style="color: blue; font-weight: bold">in </span>counter<span style="font-weight: bold">.</span>keys<span style="font-weight: bold">():
+            </span>value <span style="font-weight: bold">= </span>counter<span style="font-weight: bold">[</span>key<span style="font-weight: bold">]
+            </span>normalizedCounter<span style="font-weight: bold">[</span>key<span style="font-weight: bold">] = </span>value <span style="font-weight: bold">/ </span>total
+        <span style="color: blue; font-weight: bold">return </span>normalizedCounter
+    <span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+        </span>vector <span style="font-weight: bold">= </span>vectorOrCounter
+        s <span style="font-weight: bold">= </span>float<span style="font-weight: bold">(</span>sum<span style="font-weight: bold">(</span>vector<span style="font-weight: bold">))
+        </span><span style="color: blue; font-weight: bold">if </span>s <span style="font-weight: bold">== </span><span style="color: red">0</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return </span>vector
+        <span style="color: blue; font-weight: bold">return </span><span style="font-weight: bold">[</span>el <span style="font-weight: bold">/ </span>s <span style="color: blue; font-weight: bold">for </span>el <span style="color: blue; font-weight: bold">in </span>vector<span style="font-weight: bold">]
+
+</span><span style="color: blue; font-weight: bold">def </span>nSample<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">, </span>values<span style="font-weight: bold">, </span>n<span style="font-weight: bold">):
+    </span><span style="color: blue; font-weight: bold">if </span>sum<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">) != </span><span style="color: red">1</span><span style="font-weight: bold">:
+        </span>distribution <span style="font-weight: bold">= </span>normalize<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">)
+    </span>rand <span style="font-weight: bold">= [</span>random<span style="font-weight: bold">.</span>random<span style="font-weight: bold">() </span><span style="color: blue; font-weight: bold">for </span>i <span style="color: blue; font-weight: bold">in </span>range<span style="font-weight: bold">(</span>n<span style="font-weight: bold">)]
+    </span>rand<span style="font-weight: bold">.</span>sort<span style="font-weight: bold">()
+    </span>samples <span style="font-weight: bold">= []
+    </span>samplePos<span style="font-weight: bold">, </span>distPos<span style="font-weight: bold">, </span>cdf <span style="font-weight: bold">= </span><span style="color: red">0</span><span style="font-weight: bold">,</span><span style="color: red">0</span><span style="font-weight: bold">, </span>distribution<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]
+    </span><span style="color: blue; font-weight: bold">while </span>samplePos <span style="font-weight: bold">&lt; </span>n<span style="font-weight: bold">:
+        </span><span style="color: blue; font-weight: bold">if </span>rand<span style="font-weight: bold">[</span>samplePos<span style="font-weight: bold">] &lt; </span>cdf<span style="font-weight: bold">:
+            </span>samplePos <span style="font-weight: bold">+= </span><span style="color: red">1
+            </span>samples<span style="font-weight: bold">.</span>append<span style="font-weight: bold">(</span>values<span style="font-weight: bold">[</span>distPos<span style="font-weight: bold">])
+        </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+            </span>distPos <span style="font-weight: bold">+= </span><span style="color: red">1
+            </span>cdf <span style="font-weight: bold">+= </span>distribution<span style="font-weight: bold">[</span>distPos<span style="font-weight: bold">]
+    </span><span style="color: blue; font-weight: bold">return </span>samples
+
+<span style="color: blue; font-weight: bold">def </span>sample<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">, </span>values <span style="font-weight: bold">= </span><span style="color: blue">None</span><span style="font-weight: bold">):
+    </span><span style="color: blue; font-weight: bold">if </span>type<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">) == </span>Counter<span style="font-weight: bold">:
+        </span>items <span style="font-weight: bold">= </span>sorted<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">.</span>items<span style="font-weight: bold">())
+        </span>distribution <span style="font-weight: bold">= [</span>i<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] </span><span style="color: blue; font-weight: bold">for </span>i <span style="color: blue; font-weight: bold">in </span>items<span style="font-weight: bold">]
+        </span>values <span style="font-weight: bold">= [</span>i<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] </span><span style="color: blue; font-weight: bold">for </span>i <span style="color: blue; font-weight: bold">in </span>items<span style="font-weight: bold">]
+    </span><span style="color: blue; font-weight: bold">if </span>sum<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">) != </span><span style="color: red">1</span><span style="font-weight: bold">:
+        </span>distribution <span style="font-weight: bold">= </span>normalize<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">)
+    </span>choice <span style="font-weight: bold">= </span>random<span style="font-weight: bold">.</span>random<span style="font-weight: bold">()
+    </span>i<span style="font-weight: bold">, </span>total<span style="font-weight: bold">= </span><span style="color: red">0</span><span style="font-weight: bold">, </span>distribution<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]
+    </span><span style="color: blue; font-weight: bold">while </span>choice <span style="font-weight: bold">&gt; </span>total<span style="font-weight: bold">:
+        </span>i <span style="font-weight: bold">+= </span><span style="color: red">1
+        </span>total <span style="font-weight: bold">+= </span>distribution<span style="font-weight: bold">[</span>i<span style="font-weight: bold">]
+    </span><span style="color: blue; font-weight: bold">return </span>values<span style="font-weight: bold">[</span>i<span style="font-weight: bold">]
+
+</span><span style="color: blue; font-weight: bold">def </span>sampleFromCounter<span style="font-weight: bold">(</span>ctr<span style="font-weight: bold">):
+    </span>items <span style="font-weight: bold">= </span>sorted<span style="font-weight: bold">(</span>ctr<span style="font-weight: bold">.</span>items<span style="font-weight: bold">())
+    </span><span style="color: blue; font-weight: bold">return </span>sample<span style="font-weight: bold">([</span>v <span style="color: blue; font-weight: bold">for </span>k<span style="font-weight: bold">,</span>v <span style="color: blue; font-weight: bold">in </span>items<span style="font-weight: bold">], [</span>k <span style="color: blue; font-weight: bold">for </span>k<span style="font-weight: bold">,</span>v <span style="color: blue; font-weight: bold">in </span>items<span style="font-weight: bold">])
+
+</span><span style="color: blue; font-weight: bold">def </span>getProbability<span style="font-weight: bold">(</span>value<span style="font-weight: bold">, </span>distribution<span style="font-weight: bold">, </span>values<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+      Gives the probability of a value under a discrete distribution
+      defined by (distributions, values).
+    """
+    </span>total <span style="font-weight: bold">= </span><span style="color: red">0.0
+    </span><span style="color: blue; font-weight: bold">for </span>prob<span style="font-weight: bold">, </span>val <span style="color: blue; font-weight: bold">in </span>zip<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">, </span>values<span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">if </span>val <span style="font-weight: bold">== </span>value<span style="font-weight: bold">:
+            </span>total <span style="font-weight: bold">+= </span>prob
+    <span style="color: blue; font-weight: bold">return </span>total
+
+<span style="color: blue; font-weight: bold">def </span>flipCoin<span style="font-weight: bold">( </span>p <span style="font-weight: bold">):
+    </span>r <span style="font-weight: bold">= </span>random<span style="font-weight: bold">.</span>random<span style="font-weight: bold">()
+    </span><span style="color: blue; font-weight: bold">return </span>r <span style="font-weight: bold">&lt; </span>p
+
+<span style="color: blue; font-weight: bold">def </span>chooseFromDistribution<span style="font-weight: bold">( </span>distribution <span style="font-weight: bold">):
+    </span><span style="color: red">"Takes either a counter or a list of (prob, key) pairs and samples"
+    </span><span style="color: blue; font-weight: bold">if </span>type<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">) == </span>dict <span style="color: blue; font-weight: bold">or </span>type<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">) == </span>Counter<span style="font-weight: bold">:
+        </span><span style="color: blue; font-weight: bold">return </span>sample<span style="font-weight: bold">(</span>distribution<span style="font-weight: bold">)
+    </span>r <span style="font-weight: bold">= </span>random<span style="font-weight: bold">.</span>random<span style="font-weight: bold">()
+    </span>base <span style="font-weight: bold">= </span><span style="color: red">0.0
+    </span><span style="color: blue; font-weight: bold">for </span>prob<span style="font-weight: bold">, </span>element <span style="color: blue; font-weight: bold">in </span>distribution<span style="font-weight: bold">:
+        </span>base <span style="font-weight: bold">+= </span>prob
+        <span style="color: blue; font-weight: bold">if </span>r <span style="font-weight: bold">&lt;= </span>base<span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return </span>element
+
+<span style="color: blue; font-weight: bold">def </span>nearestPoint<span style="font-weight: bold">( </span>pos <span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    Finds the nearest grid point to a position (discretizes).
+    """
+    </span><span style="font-weight: bold">( </span>current_row<span style="font-weight: bold">, </span>current_col <span style="font-weight: bold">) = </span>pos
+
+    grid_row <span style="font-weight: bold">= </span>int<span style="font-weight: bold">( </span>current_row <span style="font-weight: bold">+ </span><span style="color: red">0.5 </span><span style="font-weight: bold">)
+    </span>grid_col <span style="font-weight: bold">= </span>int<span style="font-weight: bold">( </span>current_col <span style="font-weight: bold">+ </span><span style="color: red">0.5 </span><span style="font-weight: bold">)
+    </span><span style="color: blue; font-weight: bold">return </span><span style="font-weight: bold">( </span>grid_row<span style="font-weight: bold">, </span>grid_col <span style="font-weight: bold">)
+
+</span><span style="color: blue; font-weight: bold">def </span>sign<span style="font-weight: bold">( </span>x <span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    Returns 1 or -1 depending on the sign of x
+    """
+    </span><span style="color: blue; font-weight: bold">if</span><span style="font-weight: bold">( </span>x <span style="font-weight: bold">&gt;= </span><span style="color: red">0 </span><span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">1
+    </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+        </span><span style="color: blue; font-weight: bold">return </span><span style="font-weight: bold">-</span><span style="color: red">1
+
+</span><span style="color: blue; font-weight: bold">def </span>arrayInvert<span style="font-weight: bold">(</span>array<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    Inverts a matrix stored as a list of lists.
+    """
+    </span>result <span style="font-weight: bold">= [[] </span><span style="color: blue; font-weight: bold">for </span>i <span style="color: blue; font-weight: bold">in </span>array<span style="font-weight: bold">]
+    </span><span style="color: blue; font-weight: bold">for </span>outer <span style="color: blue; font-weight: bold">in </span>array<span style="font-weight: bold">:
+        </span><span style="color: blue; font-weight: bold">for </span>inner <span style="color: blue; font-weight: bold">in </span>range<span style="font-weight: bold">(</span>len<span style="font-weight: bold">(</span>outer<span style="font-weight: bold">)):
+            </span>result<span style="font-weight: bold">[</span>inner<span style="font-weight: bold">].</span>append<span style="font-weight: bold">(</span>outer<span style="font-weight: bold">[</span>inner<span style="font-weight: bold">])
+    </span><span style="color: blue; font-weight: bold">return </span>result
+
+<span style="color: blue; font-weight: bold">def </span>matrixAsList<span style="font-weight: bold">( </span>matrix<span style="font-weight: bold">, </span>value <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">True </span><span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    Turns a matrix into a list of coordinates matching the specified value
+    """
+    </span>rows<span style="font-weight: bold">, </span>cols <span style="font-weight: bold">= </span>len<span style="font-weight: bold">( </span>matrix <span style="font-weight: bold">), </span>len<span style="font-weight: bold">( </span>matrix<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] )
+    </span>cells <span style="font-weight: bold">= []
+    </span><span style="color: blue; font-weight: bold">for </span>row <span style="color: blue; font-weight: bold">in </span>range<span style="font-weight: bold">( </span>rows <span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">for </span>col <span style="color: blue; font-weight: bold">in </span>range<span style="font-weight: bold">( </span>cols <span style="font-weight: bold">):
+            </span><span style="color: blue; font-weight: bold">if </span>matrix<span style="font-weight: bold">[</span>row<span style="font-weight: bold">][</span>col<span style="font-weight: bold">] == </span>value<span style="font-weight: bold">:
+                </span>cells<span style="font-weight: bold">.</span>append<span style="font-weight: bold">( ( </span>row<span style="font-weight: bold">, </span>col <span style="font-weight: bold">) )
+    </span><span style="color: blue; font-weight: bold">return </span>cells
+
+<span style="color: blue; font-weight: bold">def </span>lookup<span style="font-weight: bold">(</span>name<span style="font-weight: bold">, </span>namespace<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    Get a method or class from any imported module from its name.
+    Usage: lookup(functionName, globals())
+    """
+    </span>dots <span style="font-weight: bold">= </span>name<span style="font-weight: bold">.</span>count<span style="font-weight: bold">(</span><span style="color: red">'.'</span><span style="font-weight: bold">)
+    </span><span style="color: blue; font-weight: bold">if </span>dots <span style="font-weight: bold">&gt; </span><span style="color: red">0</span><span style="font-weight: bold">:
+        </span>moduleName<span style="font-weight: bold">, </span>objName <span style="font-weight: bold">= </span><span style="color: red">'.'</span><span style="font-weight: bold">.</span>join<span style="font-weight: bold">(</span>name<span style="font-weight: bold">.</span>split<span style="font-weight: bold">(</span><span style="color: red">'.'</span><span style="font-weight: bold">)[:-</span><span style="color: red">1</span><span style="font-weight: bold">]), </span>name<span style="font-weight: bold">.</span>split<span style="font-weight: bold">(</span><span style="color: red">'.'</span><span style="font-weight: bold">)[-</span><span style="color: red">1</span><span style="font-weight: bold">]
+        </span>module <span style="font-weight: bold">= </span>__import__<span style="font-weight: bold">(</span>moduleName<span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">return </span>getattr<span style="font-weight: bold">(</span>module<span style="font-weight: bold">, </span>objName<span style="font-weight: bold">)
+    </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+        </span>modules <span style="font-weight: bold">= [</span>obj <span style="color: blue; font-weight: bold">for </span>obj <span style="color: blue; font-weight: bold">in </span>namespace<span style="font-weight: bold">.</span>values<span style="font-weight: bold">() </span><span style="color: blue; font-weight: bold">if </span>str<span style="font-weight: bold">(</span>type<span style="font-weight: bold">(</span>obj<span style="font-weight: bold">)) == </span><span style="color: red">"&lt;type 'module'&gt;"</span><span style="font-weight: bold">]
+        </span>options <span style="font-weight: bold">= [</span>getattr<span style="font-weight: bold">(</span>module<span style="font-weight: bold">, </span>name<span style="font-weight: bold">) </span><span style="color: blue; font-weight: bold">for </span>module <span style="color: blue; font-weight: bold">in </span>modules <span style="color: blue; font-weight: bold">if </span>name <span style="color: blue; font-weight: bold">in </span>dir<span style="font-weight: bold">(</span>module<span style="font-weight: bold">)]
+        </span>options <span style="font-weight: bold">+= [</span>obj<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] </span><span style="color: blue; font-weight: bold">for </span>obj <span style="color: blue; font-weight: bold">in </span>namespace<span style="font-weight: bold">.</span>items<span style="font-weight: bold">() </span><span style="color: blue; font-weight: bold">if </span>obj<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] == </span>name <span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">if </span>len<span style="font-weight: bold">(</span>options<span style="font-weight: bold">) == </span><span style="color: red">1</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return </span>options<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">if </span>len<span style="font-weight: bold">(</span>options<span style="font-weight: bold">) &gt; </span><span style="color: red">1</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">raise </span>Exception<span style="font-weight: bold">, </span><span style="color: red">'Name conflict for %s'
+        </span><span style="color: blue; font-weight: bold">raise </span>Exception<span style="font-weight: bold">, </span><span style="color: red">'%s not found as a method or class' </span><span style="font-weight: bold">% </span>name
+
+<span style="color: blue; font-weight: bold">def </span>pause<span style="font-weight: bold">():
+    </span><span style="color: darkred">"""
+    Pauses the output stream awaiting user feedback.
+    """
+    </span><span style="color: blue; font-weight: bold">print </span><span style="color: red">"&lt;Press enter/return to continue&gt;"
+    </span>raw_input<span style="font-weight: bold">()
+
+
+</span><span style="color: green; font-style: italic"># code to handle timeouts
+#
+# FIXME
+# NOTE: TimeoutFuncton is NOT reentrant.  Later timeouts will silently
+# disable earlier timeouts.  Could be solved by maintaining a global list
+# of active time outs.  Currently, questions which have test cases calling
+# this have all student code so wrapped.
+#
+</span><span style="color: blue; font-weight: bold">import </span>signal
+<span style="color: blue; font-weight: bold">import </span>time
+<span style="color: blue; font-weight: bold">class </span>TimeoutFunctionException<span style="font-weight: bold">(</span>Exception<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""Exception to raise on a timeout"""
+    </span><span style="color: blue; font-weight: bold">pass
+
+
+class </span>TimeoutFunction<span style="font-weight: bold">:
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>function<span style="font-weight: bold">, </span>timeout<span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>timeout <span style="font-weight: bold">= </span>timeout
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>function <span style="font-weight: bold">= </span>function
+
+    <span style="color: blue; font-weight: bold">def </span>handle_timeout<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>signum<span style="font-weight: bold">, </span>frame<span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">raise </span>TimeoutFunctionException<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>__call__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, *</span>args<span style="font-weight: bold">, **</span>keyArgs<span style="font-weight: bold">):
+        </span><span style="color: green; font-style: italic"># If we have SIGALRM signal, use it to cause an exception if and
+        # when this function runs too long.  Otherwise check the time taken
+        # after the method has returned, and throw an exception then.
+        </span><span style="color: blue; font-weight: bold">if </span>hasattr<span style="font-weight: bold">(</span>signal<span style="font-weight: bold">, </span><span style="color: red">'SIGALRM'</span><span style="font-weight: bold">):
+            </span>old <span style="font-weight: bold">= </span>signal<span style="font-weight: bold">.</span>signal<span style="font-weight: bold">(</span>signal<span style="font-weight: bold">.</span>SIGALRM<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>handle_timeout<span style="font-weight: bold">)
+            </span>signal<span style="font-weight: bold">.</span>alarm<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>timeout<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">try</span><span style="font-weight: bold">:
+                </span>result <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>function<span style="font-weight: bold">(*</span>args<span style="font-weight: bold">, **</span>keyArgs<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">finally</span><span style="font-weight: bold">:
+                </span>signal<span style="font-weight: bold">.</span>signal<span style="font-weight: bold">(</span>signal<span style="font-weight: bold">.</span>SIGALRM<span style="font-weight: bold">, </span>old<span style="font-weight: bold">)
+            </span>signal<span style="font-weight: bold">.</span>alarm<span style="font-weight: bold">(</span><span style="color: red">0</span><span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+            </span>startTime <span style="font-weight: bold">= </span>time<span style="font-weight: bold">.</span>time<span style="font-weight: bold">()
+            </span>result <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>function<span style="font-weight: bold">(*</span>args<span style="font-weight: bold">, **</span>keyArgs<span style="font-weight: bold">)
+            </span>timeElapsed <span style="font-weight: bold">= </span>time<span style="font-weight: bold">.</span>time<span style="font-weight: bold">() - </span>startTime
+            <span style="color: blue; font-weight: bold">if </span>timeElapsed <span style="font-weight: bold">&gt;= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>timeout<span style="font-weight: bold">:
+                </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>handle_timeout<span style="font-weight: bold">(</span><span style="color: blue">None</span><span style="font-weight: bold">, </span><span style="color: blue">None</span><span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">return </span>result
+
+
+
+_ORIGINAL_STDOUT <span style="font-weight: bold">= </span><span style="color: blue">None
+</span>_ORIGINAL_STDERR <span style="font-weight: bold">= </span><span style="color: blue">None
+</span>_MUTED <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">False
+
+class </span>WritableNull<span style="font-weight: bold">:
+    </span><span style="color: blue; font-weight: bold">def </span>write<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>string<span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">pass
+
+def </span>mutePrint<span style="font-weight: bold">():
+    </span><span style="color: blue; font-weight: bold">global </span>_ORIGINAL_STDOUT<span style="font-weight: bold">, </span>_ORIGINAL_STDERR<span style="font-weight: bold">, </span>_MUTED
+    <span style="color: blue; font-weight: bold">if </span>_MUTED<span style="font-weight: bold">:
+        </span><span style="color: blue; font-weight: bold">return
+    </span>_MUTED <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">True
+
+    </span>_ORIGINAL_STDOUT <span style="font-weight: bold">= </span>sys<span style="font-weight: bold">.</span>stdout
+    <span style="color: green; font-style: italic">#_ORIGINAL_STDERR = sys.stderr
+    </span>sys<span style="font-weight: bold">.</span>stdout <span style="font-weight: bold">= </span>WritableNull<span style="font-weight: bold">()
+    </span><span style="color: green; font-style: italic">#sys.stderr = WritableNull()
+
+</span><span style="color: blue; font-weight: bold">def </span>unmutePrint<span style="font-weight: bold">():
+    </span><span style="color: blue; font-weight: bold">global </span>_ORIGINAL_STDOUT<span style="font-weight: bold">, </span>_ORIGINAL_STDERR<span style="font-weight: bold">, </span>_MUTED
+    <span style="color: blue; font-weight: bold">if not </span>_MUTED<span style="font-weight: bold">:
+        </span><span style="color: blue; font-weight: bold">return
+    </span>_MUTED <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">False
+
+    </span>sys<span style="font-weight: bold">.</span>stdout <span style="font-weight: bold">= </span>_ORIGINAL_STDOUT
+    <span style="color: green; font-style: italic">#sys.stderr = _ORIGINAL_STDERR
+
+</span>
+  </pre>
+  
+  
+  </body></html>
