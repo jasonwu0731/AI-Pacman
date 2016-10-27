@@ -1,6 +1,6 @@
 Artificial Intelligence Fall 2016
-Prof. YU, TIAN-LI AI course
 =================================
+Prof. YU, TIAN-LI AI course
 
 ###Intro
 [The Pacman Projects](http://ai.berkeley.edu/project_overview.html) by the [University of California, Berkeley](http://berkeley.edu/).
@@ -19,7 +19,7 @@ $ python pacman.py -h
 ```
 
 ##HW1
-DFS, BFS, UCS, ASTAR, ATART heuristic 
+DFS, BFS, UCS, ASTAR, ASTAR heuristic 
 ```
 $ python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=dfs
 $ python pacman.py -l bigMaze -p SearchAgent -a fn=bfs -z .5
@@ -37,4 +37,5 @@ Eating all the dots
 $ python pacman.py -l trickySearch -p AStarFoodSearchAgent
 ```
 
+> for more information, check [here](https://github.com/jasonwu0731/NTU-AI-Fall2016/blob/master/Pacman/hw1-search/Project1.html) for details
 
