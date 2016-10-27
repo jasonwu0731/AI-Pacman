@@ -13,19 +13,17 @@ python pacman.py -h
 ```
 
 ##HW1
-DFS, BFS, UCS, ASTAR
+DFS, BFS, UCS, A*, A* heuristic 
 ```
 python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=dfs
 python pacman.py -l bigMaze -p SearchAgent -a fn=bfs -z .5
 python pacman.py -l bigMaze -p SearchAgent -a fn=ucs
 python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
 ```
-Corner problem, Corner: Heuristic
+Corner problem, Corner heuristic
 ```
 python pacman.py -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
 python pacman.py -l mediumCorners -p AStarCornersAgent -z 0.5
-```
-> Note: AStarCornersAgent is a shortcut for -p SearchAgent -a fn=aStarSearch,prob=CornersProblem,heuristic=cornersHeuristic.
 
 Eating all the dots
 ```
