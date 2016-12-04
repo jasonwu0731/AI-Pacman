@@ -1,0 +1,196 @@
+
+<html><head>
+  <title>Project 2: Multi-Agent Pacman</title>
+  <link rel="stylesheet" href="project.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="navigation.css" type="text/css" charset="utf-8">
+</head>
+<body>
+    <div id="content">
+
+    <div class="project">
+      <h2 class="project_title">Project 2: Multi-Agent Pacman</h2>
+      <hr>
+      <h3>Table of Contents</h3>
+      <ul>
+        <li><a href="#Introduction">Introduction</a></li>
+        <li><a href="#Welcome">Welcome</a></li>
+        <li><a href="#Q1">Q1: Reflex Agent</a></li>
+        <li><a href="#Q2">Q2: Minimax</a></li>
+        <li><a href="#Q3">Q3: Alpha-Beta Pruning</a></li>
+        <li><a href="#Q4">Q4: Expectimax</a></li>
+        <li><a href="#Q5">Q5: Evaluation Function</a></li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <blockquote><center><img src="pacman_multi_agent.png" width="400px"></center>
+        <p></p>
+        <center>Pacman, now with ghosts.<br> Minimax, Expectimax,<br> Evaluation.</center>
+        <p></p>
+      </blockquote>
+      <h3><a name="Introduction"></a>Introduction</h3>
+      <p>In this project, you will design agents for the classic version of Pacman, including ghosts. Along the way, you will implement both minimax and expectimax search and try your hand at evaluation function design.</p>
+      <p>The code base has not changed much from the previous project, but please start with a fresh installation, rather than intermingling files from project 1.</p>
+      <table class="intro" border="0" cellpadding="10">
+        <tbody>
+          <tr>
+            <td colspan="2"><b>Key files to read:</b></td>
+          </tr>
+         <tr>
+          <td><code><a href="docs/multiAgents.html">multiAgents.py</a></code></td>
+          <td>Where all of your multi-agent search agents will reside.</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/pacman.html">pacman.py</a></code></td>
+          <td>The main file that runs Pacman games. This file also describes a Pacman <code>GameState</code> type, which you will use extensively in this project</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/game.html">game.py</a></code></td>
+          <td>The logic behind how the Pacman world works. This file describes several supporting types like AgentState, Agent, Direction, and Grid.</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/util.html">util.py</a></code></td>
+          <td>Useful data structures for implementing search algorithms.</td>
+        </tr>
+        <tr>
+          <td colspan="2"><b>Files you can ignore:</b></td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/graphicsDisplay.html">graphicsDisplay.py</a></code></td>
+          <td>Graphics for Pacman</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/graphicsUtils.html">graphicsUtils.py</a></code></td>
+          <td>Support for Pacman graphics</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/textDisplay.html">textDisplay.py</a></code></td>
+          <td>ASCII graphics for Pacman</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/ghostAgents.html">ghostAgents.py</a></code></td>
+          <td>Agents to control ghosts</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/keyboardAgents.html">keyboardAgents.py</a></code></td>
+          <td>Keyboard interfaces to control Pacman</td>
+        </tr>
+        <tr>
+          <td><code><a href="docs/layout.html">layout.py</a></code></td>
+          <td>Code for reading layout files and storing their contents</td>
+        </tr>
+      </tbody>
+    </table>
+    <p></p>
+	<p><strong>Deadline:</strong> 2016 / 12 / 01  </p>
+    <p><strong>Files to Edit and Submit:</strong> You will fill in portions of <code><a href="docs/multiAgents.html">multiAgents.py</a></code> during the assignment. You should submit this file and a documentation named <code><font color='blue'>documentation.*</font></code> (in pdf, txt, etc) of your evaluation function (see question 5). You may also submit supporting files (like <code><a href="docs/search.html">search.py</a></code>, etc.) that you use in your code.  Pack these files (only) and upload it to Ceiba. Please <em>do not</em> change the other files in this distribution or submit any of our original files other than <code><a href="docs/multiAgents.html">multiAgents.py</a></code>.  Any changes in these files will be overwritten during autograding.
+    <p><strong>Evaluation:</strong> Your code will be autograded for technical correctness. Please <em>do not</em> change the names of any provided functions or classes within the code, or you will wreak havoc on the autograder. However, the correctness of your implementation -- not the autograder's judgements -- will be the final judge of your score. If necessary, we will review and grade assignments individually to ensure that you receive due credit for your work.</p>
+    <p><strong>Getting Help:</strong> You are not alone! If you find yourself stuck on something, contact the course staff for help. Office hours and the discussion forum are there for your support; please use them. If you can't make our office hours, let us know and we will schedule more. We want these projects to be rewarding and instructional, not frustrating and demoralizing. But, we don't know when or how to help unless you ask. One more piece of advice: if you don't know what a variable does or what kind of values it takes, print it out.</p>
+  </div>
+
+  <hr>
+
+  <div class="project">
+    <h3><a name="Welcome"></a>Multi-Agent Pacman</h3>
+    <p>First, play a game of classic Pacman:</p>
+    <pre>python pacman.py</pre>
+    <p>Now, run the provided <code>ReflexAgent</code> in <code><a href="docs/multiAgents.html">multiAgents.py</a></code>:</p>
+    <pre>python pacman.py -p ReflexAgent</pre>
+    <p>Note that it plays quite poorly even on simple layouts:</p>
+    <pre>python pacman.py -p ReflexAgent -l testClassic</pre>
+    <p>Inspect its code (in <code><a href="docs/multiAgents.html">multiAgents.py</a></code>) and make sure you understand what it's doing.</p>
+  </div>
+
+  <hr>
+
+  <div class="project">
+    <h3><a name="Q1"></a>Question 1 (1.5 points): Reflex Agent</h3>
+    <p>Improve the <code>ReflexAgent</code> in <code><a href="docs/multiAgents.html">multiAgents.py</a></code> to play respectably. The provided reflex agent code provides some helpful examples of methods that query the <code>GameState</code> for information. A capable reflex agent will have to consider both food locations and ghost locations to perform well. Your agent should easily and reliably clear the <code>testClassic</code> layout:</p>
+    <pre>python pacman.py -p ReflexAgent -l testClassic</pre>
+    <p>Try out your reflex agent on the default <code>mediumClassic</code> layout with one ghost or two (and animation off to speed up the display):</p>
+    <pre>python pacman.py --frameTime 0 -p ReflexAgent -k 1</pre>
+    <pre>python pacman.py --frameTime 0 -p ReflexAgent -k 2</pre>
+    <p>How does your agent fare? It will likely often die with 2 ghosts on the default board, unless your evaluation function is quite good.</p>
+	<p><em>Note:</em> you can never have more ghosts than the <a href="layouts/mediumClassic.lay">layout</a> permits.
+    <p><em>Note:</em> As features, try the reciprocal of important values (such as distance to food) rather than just the values themselves.</p>
+    <p><em>Note:</em> The evaluation function you're writing is evaluating state-action pairs; in later parts of the project, you'll be evaluating states.</p>
+    <p><em>Options:</em> Default ghosts are random; you can also play for fun with slightly smarter directional ghosts using <code>-g DirectionalGhost</code>. If the randomness is preventing you from telling whether your agent is improving, you can use <code>-f</code> to run with a fixed random seed (same random choices every game). You can also play multiple games in a row with <code>-n</code>. Turn off graphics with <code>-q</code> to run lots of games quickly.</p>
+    <p><em>Grading:</em> we will run your agent on the <code>openClassic</code> layout 10 times. without dying more than twice or thrashing around infinitely (i.e. repeatedly moving back and forth between two positions, making no progress). </p>
+    <pre>python pacman.py -p ReflexAgent -l openClassic -n 10 -q</pre>
+	<p>Don't spend too much time on this question, though, as the meat of the project lies ahead.</p>
+  </div>
+
+  <hr>
+
+  <div class="project">
+    <h3><a name="Q2"></a>Question 2 (1.5 points): Minimax</h3>
+    <p>Now you will write an adversarial search agent in the provided <code>MinimaxAgent</code> class stub in <code><a href="docs/multiAgents.html">multiAgents.py</a></code>. Your minimax agent should work with any number of ghosts, so you'll have to write an algorithm that is slightly more general than what you've previously seen in lecture. In particular, your minimax tree will have multiple min layers (one for each ghost) for every max layer.</p>
+    <p>Your code should also expand the game tree to an arbitrary depth. Score the leaves of your minimax tree with the supplied <code>self.evaluationFunction</code>, which defaults to <code>scoreEvaluationFunction</code>. <code>MinimaxAgent</code> extends <code>MultiAgentSearchAgent</code>, which gives access to <code>self.depth</code> and <code>self.evaluationFunction</code>. Make sure your minimax code makes reference to these two variables where appropriate as these variables are populated in response to command line options.</p>
+    <p><em>Important:</em> A single search ply is considered to be one Pacman move and all the ghosts' responses, so depth 2 search will involve Pacman and each ghost moving two times.</p>
+    <p><em><strong>Hints and Observations</strong></em></p>
+    <ul>
+      <li>The correct implementation of minimax will lead to Pacman losing the game in some tests. This is not a problem: as it is correct behaviour, it will pass the tests.</li>
+      <li>The evaluation function for the pacman test in this part is already written (<code>self.evaluationFunction</code>). You shouldn't change this function, but recognize that now we're evaluating *states* rather than actions, as we were for the reflex agent. Look-ahead agents evaluate future states whereas reflex agents evaluate actions from the current state.</li>
+      <li>The minimax values of the initial state in the <code>minimaxClassic</code> layout are 9, 8, 7, -492 for depths 1, 2, 3 and 4 respectively. Note that your minimax agent will often win (665/1000 games for us) despite the dire prediction of depth 4 minimax.
+        <pre>python pacman.py -p MinimaxAgent -l minimaxClassic -a depth=4</pre>
+      </li>
+	  <li>If you want to increase the search depth achievable by your agent, you can remove the Directions.STOP action from Pacman's list of possible actions. Depth 2 should be pretty quick, but depth 3 or 4 will be slow. Don't worry, the next question will speed up the search somewhat.</li>
+      <li>Pacman is always agent 0, and the agents move in order of increasing agent index.</li>
+      <li>All states in minimax should be <code>GameStates</code>, either passed in to <code>getAction</code> or generated via <code>GameState.generateSuccessor</code>. In this project, you will not be abstracting to simplified states.</li>
+      <li>On larger boards such as <code>openClassic</code> and <code>mediumClassic</code> (the default), you'll find Pacman to be good at not dying, but quite bad at winning. He'll often thrash around without making progress. He might even thrash around right next to a dot without eating it because he doesn't know where he'd go after eating that dot. Don't worry if you see this behavior, question 5 will clean up all of these issues.</li>
+      <li>When Pacman believes that his death is unavoidable, he will try to end the game as soon as possible because of the constant penalty for living. Sometimes, this is the wrong thing to do with random ghosts, but minimax agents always assume the worst:
+        <pre>python pacman.py -p MinimaxAgent -l trappedClassic -a depth=3</pre>
+        Make sure you understand why Pacman rushes the closest ghost in this case.</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q3"></a>Question 3 (1.5 points): Alpha-Beta Pruning</h3>
+      <p>Make a new agent that uses alpha-beta pruning to more efficiently explore the minimax tree, in <code>AlphaBetaAgent</code>. Again, your algorithm will be slightly more general than the pseudocode from lecture, so part of the challenge is to extend the alpha-beta pruning logic appropriately to multiple minimizer agents.</p>
+      <p>You should see a speed-up (perhaps depth 3 alpha-beta will run as fast as depth 2 minimax). Ideally, depth 3 on <code>smallClassic</code> should run in just a few seconds per move or faster.</p>
+      <pre>python pacman.py -p AlphaBetaAgent -a depth=3 -l smallClassic</pre>
+      <p>The <code>AlphaBetaAgent</code> minimax values should be identical to the <code>MinimaxAgent</code> minimax values, although the actions it selects can vary because of different tie-breaking behavior. Again, the minimax values of the initial state in the <code>minimaxClassic</code> layout are 9, 8, 7 and -492 for depths 1, 2, 3 and 4 respectively.</p>
+      <p>The correct implementation of alpha-beta pruning will lead to Pacman losing some of the tests. This is not a problem: as it is correct behaviour, it will pass the tests.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q4"></a>Question 4 (1.5 points): Expectimax</h3>
+      <p>Minimax and alpha-beta are great, but they both assume that you are playing against an adversary who makes optimal decisions. As anyone who has ever won tic-tac-toe can tell you, this is not always the case. In this question you will implement the <code>ExpectimaxAgent</code>, which is useful for modeling probabilistic behavior of agents who may make suboptimal choices.</p>
+      <p>Debugging on these small and manageable test cases is recommended and will help you to find bugs quickly. <b>Make sure when you compute your averages that you use floats.</b> Integer division in Python truncates, so that <code>1/2 = 0</code>, unlike the case with floats where <code>1.0/2.0 = 0.5</code>.</p>
+      <p>Random ghosts are of course not optimal minimax agents, and so modeling them with minimax search may not be appropriate. <code>ExpectimaxAgent</code>, will no longer take the min over all ghost actions, but the expectation according to your agent's model of how the ghosts act. To simplify your code, assume you will only be running against an adversary which chooses amongst their <code>getLegalAction</code>s uniformly at random.</p>
+      <p>To see how the ExpectimaxAgent behaves in Pacman, run:</p>
+      <pre>python pacman.py -p ExpectimaxAgent -l minimaxClassic -a depth=3</pre>
+      <p>You should now observe a more cavalier approach in close quarters with ghosts. In particular, if Pacman perceives that he could be trapped but might escape to grab a few more pieces of food, he'll at least try. Investigate the results of these two scenarios:</p>
+      <pre>python pacman.py -p AlphaBetaAgent -l trappedClassic -a depth=3 -q -n 10</pre>
+      <pre>python pacman.py -p ExpectimaxAgent -l trappedClassic -a depth=3 -q -n 10</pre>
+      <p>You should find that your <code>ExpectimaxAgent</code> wins about half the time, while your <code>AlphaBetaAgent</code> always loses. Make sure you understand why the behavior here differs from the minimax case.</p>
+      </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q5"></a>Question 5 (2.5 points): Evaluation Function</h3>
+      <p>Write a better evaluation function for pacman in the provided function <code>betterEvaluationFunction</code>. The evaluation function should evaluate states, rather than actions like your reflex agent evaluation function did. You may use any tools at your disposal for evaluation, including your search code from the last project. With depth 2 search, your evaluation function should clear the <code>smallClassic</code> layout with one random ghost more than half the time and still run at a reasonable rate (The grading of this question depends on the performance of your evaluation function: you get 0.4 point for not always losing the game, 1.0 point for winning rate larger than 50%; and you can get additional 0.4 point each time when your Pacman averages above 500, 750, 1000, 1200 points in the winning games. You can get further two 0.2 bonus point for your Pacman's averaging above 1350 and 1500 points when he's winning.)</p>
+      <pre>python pacman.py -l smallClassic -p ExpectimaxAgent -a evalFn=better -q -n 30</pre>
+      <p>Document your evaluation function!  We're very curious about what great ideas you have, so don't be shy. A good documentation should clearly describe the evaluation function utilized, explain its meaning, why you adopt it, and how it affects Pacman's behavior. A good documentation may at most earns 0.2 bonus point!
+      <h4>Hints and Observations</h4>
+      <ul>
+        <li>As for your reflex agent evaluation function, you may want to use the reciprocal of important values (such as distance to food) rather than the values themselves.</li>
+        <li>One way you might want to write your evaluation function is to use a linear combination of features. That is, compute values for features about the state that you think are important, and then combine those features by multiplying them by different values and adding the results together. You might decide what to multiply each feature by based on how important you think it is.</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <p><em>Project 2 is done.  Go Pacman!</em></p>
+
+  </div>
+
+
+</body></html>
