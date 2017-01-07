@@ -1,0 +1,143 @@
+body, html{
+    background: #ddd;
+    width: 925px;
+    height:100%;
+    min-width: 500px;
+    margin-top: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#content {
+    background: #fff;
+    color: #333;
+    border: 1px solid black;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 30px;
+    font: 12px verdana,helvetica,arial,sans-serif;
+}
+
+h2,h3,h4,h5 {
+    color: #325B9D;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 200%;
+}
+
+h3 {
+    font-size: 160%;
+    line-height: 90%
+    margin-top: 30px;
+}
+
+h4 {
+    font-size: 130%;
+    margin: 20px 0 10px 0;
+}
+
+h5 {
+    font-size: 90%;
+}
+
+p {
+    line-height: 140%;
+    margin: 20px;
+}
+
+.indent {
+    margin: 20px;
+}
+
+.code_snippet {
+    margin: 20px;
+}
+
+pre {
+    margin: 20px;
+}
+
+li p {
+    margin: 0px;
+}
+
+pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+}
+
+.project_title {
+    text-align: center;
+}
+
+table.intro {
+    padding: 10px;
+}
+
+td {
+    font: 12px verdana,helvetica,arial,sans-serif;
+}
+
+table#syllabus {
+    padding: 20px;
+    text-align: center;
+}
+
+table#syllabus tbody tr td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+table#syllabus thead tr td {
+    text-decoration: underline;
+}
+
+table#syllabus tbody tr th.slides {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+table#syllabus tbody tr td.slides {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.api {
+    padding-left: 20px;
+}
+
+table.videos {
+    width: 90%;
+    text-align: center;
+    table-layout:fixed;
+}
+
+table.videos tbody tr td.lecture_number {
+    width: 10%;
+}
+
+table.videos tbody tr td.lecture_title {
+    width: 45%;
+}
+
+table.videos tbody tr td.lecturer {
+    width: 12%;
+}
+
+table.videos tbody tr td.notes{
+    width: 33%;
+}
+
+table.section_handouts {
+    width: 80%;
+    text-align: center;
+}
+
+table.section_handouts tbody tr th.section_number {
+    width: 15%;
+}

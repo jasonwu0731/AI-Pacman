@@ -1,0 +1,7 @@
+python busters.py
+python test.py -t test_cases/step1/1-ExactObserve
+python test.py -t test_cases/step1/2-ExactObserve
+python test.py -t test_cases/step2/1-ExactElapse
+python test.py -t test_cases/step2/2-ExactElapse
+python busters.py -l smallHunt -p GreedyBustersAgent -n 10
+python busters.py -l smallHunt -p GreedyBustersAgent -n 10 --frameTime=0

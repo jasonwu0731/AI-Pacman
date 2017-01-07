@@ -1,0 +1,80 @@
+
+<!-- saved from url=(0106)https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/reinforcement/v1/001/docs/mdp.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>mdp.py</title>
+  </head>
+  <body>
+  <h3>mdp.py (<a href="https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/reinforcement/v1/001/mdp.py">original</a>)</h3>
+  <hr>
+  <pre><span style="color: green; font-style: italic"># mdp.py
+# ------
+# Licensing Information:  You are free to use or extend these projects for
+# educational purposes provided that (1) you do not distribute or publish
+# solutions, (2) you retain this notice, and (3) you provide clear
+# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
+# 
+# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
+# The core projects and autograders were primarily created by John DeNero
+# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and
+# Pieter Abbeel (pabbeel@cs.berkeley.edu).
+
+
+</span><span style="color: blue; font-weight: bold">import </span>random
+
+<span style="color: blue; font-weight: bold">class </span>MarkovDecisionProcess<span style="font-weight: bold">:
+
+    </span><span style="color: blue; font-weight: bold">def </span>getStates<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Return a list of all states in the MDP.
+        Not generally possible for large MDPs.
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>getStartState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Return the start state of the MDP.
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>getPossibleActions<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Return list of possible actions from 'state'.
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>getTransitionStatesAndProbs<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">, </span>action<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns list of (nextState, prob) pairs
+        representing the states reachable
+        from 'state' by taking 'action' along
+        with their transition probabilities.
+
+        Note that in Q-Learning and reinforcment
+        learning in general, we do not know these
+        probabilities nor do we directly model them.
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>getReward<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">, </span>action<span style="font-weight: bold">, </span>nextState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Get the reward for the state, action, nextState transition.
+
+        Not available in reinforcement learning.
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>isTerminal<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns true if the current state is a terminal state.  By convention,
+        a terminal state has zero future rewards.  Sometimes the terminal state(s)
+        may have no possible actions.  It is also common to think of the terminal
+        state as having a self-loop action 'pass' with zero reward; the formulations
+        are equivalent.
+        """
+        </span>abstract
+
+  </pre>
+  
+  
+  </body></html>

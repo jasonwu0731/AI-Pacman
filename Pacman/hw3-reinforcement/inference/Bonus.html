@@ -1,0 +1,177 @@
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>Bonus: Inference</title>
+  <link rel="stylesheet" href="project.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="navigation.css" type="text/css" charset="utf-8">
+</head>
+<body>
+  
+  <div id="content">
+
+    <div class="project">
+      <h2 class="project_title">Bonus: Inference</h2>
+      <hr>
+      <h3>Table of Contents</h3>
+      <ul>
+        <li><a href="#Introduction">Introduction</a></li>
+        <li><a href="#Welcome">Welcome</a></li>
+        <li><a href="#Q1">Step 1: Exact Inference: Observation</a></li>
+        <li><a href="#Q2">Step 2: Exact Inference: Time Elapse</a></li>
+        <li><a href="#Q3">Step 3: Exact Inference: Full System</a></li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <blockquote><center><img src="busters.png" alt="GHOSTBUSTERS" width="400px"></center>
+        <p></p>
+        <center>I can hear you, ghost.<br> Running won't save you from my<br> Particle filter!</center>
+        <p></p>
+      </blockquote>
+      <h3><a name="Introduction"></a>Introduction</h3>
+      <p>Pacman spends his life running from ghosts, but things were not always so. Legend has it that many years ago, Pacman's great grandfather Grandpac learned to hunt ghosts for sport. However, he was blinded by his power and could only track ghosts by their banging and clanging.</p>
+      <p>In this project, you will design Pacman agents that use sensors to locate and eat invisible ghosts. You'll advance from locating single, stationary ghosts to hunting packs of multiple moving ghosts with ruthless efficiency.</p>
+      <table class="intro" border="0" cellpadding="10">
+        <tbody>
+          <tr>
+            <td colspan="2"><b>Files you'll edit:</b></td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/bustersAgents.html">bustersAgents.py</a></code></td>
+            <td>Agents for playing the Ghostbusters variant of Pacman.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/inference.html">inference.py</a></code></td>
+            <td>Code for tracking ghosts over time using their sounds.</td>
+          </tr>
+          <tr>
+            <td colspan="2"><b>Files you will not edit:</b></td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/busters.html">busters.py</a></code></td>
+            <td>The main entry to Ghostbusters (replacing Pacman.py)</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/bustersGhostAgents.html">bustersGhostAgents.py</a></code></td>
+            <td>New ghost agents for Ghostbusters</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/distanceCalculator.html">distanceCalculator.py</a></code></td>
+            <td>Computes maze distances</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/game.html">game.py</a></code></td>
+            <td>Inner workings and helper classes for Pacman</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/ghostAgents.html">ghostAgents.py</a></code></td>
+            <td>Agents to control ghosts</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/graphicsDisplay.html">graphicsDisplay.py</a></code></td>
+            <td>Graphics for Pacman</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/graphicsUtils.html">graphicsUtils.py</a></code></td>
+            <td>Support for Pacman graphics</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/keyboardAgents.html">keyboardAgents.py</a></code></td>
+            <td>Keyboard interfaces to control Pacman</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/layout.html">layout.py</a></code></td>
+            <td>Code for reading layout files and storing their contents</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/util.html">util.py</a></code></td>
+            <td>Utility functions</td>
+          </tr>
+        </tbody>
+      </table>
+      <p></p>
+	  <p><strong>Deadline:</strong> 2017 / 01 / 05 </p>
+      <p><strong>Files to Edit and Submit:</strong> You will fill in portions of <code><a href="docs/bustersAgents.html">bustersAgents.py</a></code> and <code><a href="docs/inference.html">inference.py</a></code> during the assignment. You should submit these files with your code and comments. Please <em>do not</em> change the other files in this distribution or submit any of our original files other than these files.</p>
+      <p><strong>Evaluation:</strong> Your code will be autograded for technical correctness. Please <em>do not</em> change the names of any provided functions or classes within the code, or you will wreak havoc on the autograder. However, the correctness of your implementation -- not the autograder's judgements -- will be the final judge of your score. If necessary, we will review and grade assignments individually to ensure that you receive due credit for your work.</p>
+      <p><strong>Getting Help:</strong> You are not alone! If you find yourself stuck on something, contact the course staff (TA) for help. We want these projects to be rewarding and instructional, not frustrating and demoralizing. But, we don't know when or how to help unless you ask. One more piece of advice: if you don't know what a variable does or what kind of values it takes, print it out.</p>
+      <p><strong>Forum:</strong> Post your questions (but not project solutions) and discuss with classmates on the homework forum. Please be careful not to post spoilers to the forum.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Welcome"></a>Ghostbusters and BNs</h3>
+      <p>In Ghostbusters, the goal is to hunt down scared but invisible ghosts. Pacman, ever resourceful, is equipped with sonar (ears) that provides noisy readings of the Manhattan distance to each ghost. The game ends when Pacman has eaten all the ghosts. To start, try playing a game yourself using the keyboard.</p>
+      <pre>python busters.py</pre>
+      <p>The blocks of color indicate where the each ghost could possibly be, given the noisy distance readings provided to Pacman. The noisy distances at the bottom of the display are always non-negative, and always within 7 of the true distance. The probability of a distance reading decreases exponentially with its difference from the true distance.</p>
+      <p>Your primary task in this project is to implement inference to track the ghosts. For the keyboard based game above, a crude form of inference was implemented for you by default: all squares in which a ghost could possibly be are shaded by the color of the ghost. Naturally, we want a better estimate of the ghost's position. Fortunately, Bayes' Nets provide us with powerful tools for making the most of the information we have. Throughout the rest of this project, you will implement algorithms for performing both exact and approximate inference using Bayes' Nets. The lab is challenging, so we do encouarge you to start early and seek help when necessary.</p>
+      <p>As you implement and debug your code, you may find it useful to run a single test at a time. For example if you want to run the first test of step 1, use:</p>
+      <pre>python test.py -t test_cases/step1/1-ExactObserve</pre>
+      <p>In general, some example test cases in first two steps can be found inside test_cases/step*.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q1"></a>Step 1 (0.25 Points): Exact Inference Observation</h3>
+      <p>In this question, you will update the <code>observe</code> method in <code>ExactInference</code> class of <code>inference.py</code> to correctly update the agent's belief distribution over ghost positions given an observation from Pacman's sensors. A correct implementation should also handle one special case: when a ghost is eaten, you should place that ghost in its prison cell, as described in the comments of <code>observe</code>.</p>
+      <p>You can test by the following two commands:</p>
+      <pre>python test.py -t test_cases/step1/1-ExactObserve</pre>
+	  <pre>python test.py -t test_cases/step1/2-ExactObserve</pre>
+      <p>As you watch the test cases, be sure that you understand how the squares converge to their final coloring. In test cases where is Pacman boxed in (which is to say, he is unable to change his observation point), why does Pacman sometimes have trouble finding the exact location of the ghost?</p>
+      <p><em>Note:</em> your busters agents have a separate inference module for each ghost they are tracking. That's why if you print an observation inside the <code>observe</code> function, you'll only see a single number even though there may be multiple ghosts on the board.</p>
+      <p>Hints:</p>
+      <ul>
+        <li>You are implementing the online belief update for observing new evidence. Before any readings, Pacman believes the ghost could be anywhere: a uniform prior (see <code>initializeUniformly</code>). After receiving a reading, the <code>observe</code> function is called, which must update the belief at every position.</li>
+        <li>Before typing any code, write down the equation of the inference problem you are trying to solve.</li>
+        <li>Try printing <code>noisyDistance</code>, <code>emissionModel</code>, and <code>PacmanPosition</code> (in the <code>observe</code> function) to get started.</li>
+        <li>In the Pacman display, high posterior beliefs are represented by bright colors, while low beliefs are represented by dim colors. You should start with a large cloud of belief that shrinks over time as more evidence accumulates.</li>
+        <li>Beliefs are stored as <code>util.Counter</code> objects (like dictionaries) in a field called <code> self.beliefs</code>, which you should update.</li>
+        <li>You should not need to store any evidence. The only thing you need to store in <code>ExactInference</code> is <code>self.beliefs</code>.</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q2"></a>Step 2 (0.25 Points): Exact Inference with Time Elapse</h3>
+      <p>In the previous question you implemented belief updates for Pacman based on his observations. Fortunately, Pacman's observations are not his only source of knowledge about where a ghost may be. Pacman also has knowledge about the ways that a ghost may move; namely that the ghost can not move through a wall or more than one space in one timestep.</p>
+      <p>To understand why this is useful to Pacman, consider the following scenario in which there is Pacman and one Ghost. Pacman receives many observations which indicate the ghost is very near, but then one which indicates the ghost is very far. The reading indicating the ghost is very far is likely to be the result of a buggy sensor. Pacman's prior knowledge of how the ghost may move will decrease the impact of this reading since Pacman knows the ghost could not move so far in only one move.</p>
+      <p>In this question, you will implement the <code>elapseTime</code> method in <code>ExactInference</code>. Your agent has access to the action distribution for any <code>GhostAgent</code>. In order to test your <code>elapseTime</code> implementation separately from your <code>observe</code> implementation in the previous question, this question will not make use of your <code>observe</code> implementation.</p>
+      <p>Since Pacman is not utilizing any observations about the ghost, this means that Pacman will start with a uniform distribution over all spaces, and then update his beliefs according to how he knows the Ghost is able to move. Since Pacman is not observing the ghost, this means the ghost's actions will not impact Pacman's beliefs. Over time, Pacman's beliefs will come to reflect places on the board where he believes ghosts are most likely to be given the geometry of the board and what Pacman already knows about their valid movements.</p>
+      <p>For the tests in this question we will sometimes use a ghost with random movements and other times we will use the GoSouthGhost. This ghost tends to move south so over time, and without any observations, Pacman's belief distribution should begin to focus around the bottom of the board. To see which ghost is used for each test case you can look in the .test files.</p>
+      <p>As an example of the GoSouthGhostAgent, you can run</p>
+      <pre>python test.py -t test_cases/step2/2-ExactElapse</pre>
+      <p>and observe that the distribution becomes concentrated at the bottom of the board.</p>
+      <p>As you watch the output, remember that lighter squares indicate that pacman believes a ghost is more likely to occupy that location, and darker squares indicate a ghost is less likely to occupy that location. For which of the test cases do you notice differences emerging in the shading of the squares? Can you explain why some squares get lighter and some squares get darker?</p>
+      <p>Hints:</p>
+      <ul>
+        <li>Instructions for obtaining a distribution over where a ghost will go next, given its current position and the <code>gameState</code>, appears in the comments of <code>ExactInference.elapseTime</code> in <code>inference.py</code>.</li>
+        <li>We assume that ghosts still move independently of one another, so while you can develop all of your code for one ghost at a time, adding multiple ghosts should still work correctly.</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q3"></a>Step 3 (0.5 points): Exact Inference Full Test</h3>
+      <p>Now that Pacman knows how to use both his prior knowledge and his observations when figuring out where a ghost is, he is ready to hunt down ghosts on his own. This question will use your <code>observe</code> and <code>elapseTime</code> implementations together, along with a simple greedy hunting strategy which you will implement for this question. In the simple greedy strategy, Pacman assumes that each ghost is in its most likely position according to its beliefs, then moves toward the closest ghost. Up to this point, Pacman has moved by randomly selecting a valid action.</p>
+      <p>Implement the <code>chooseAction</code> method in <code>GreedyBustersAgent</code> in <code>bustersAgents.py</code>. Your agent should first find the most likely position of each remaining (uncaptured) ghost, then choose an action that minimizes the distance to the closest ghost. If correctly implemented, your agent should win the game in <code>smallHunt</code> with a score greater than 700 at least 8 out of 10 times. </p>
+      <p>To see the result by typing the following command:</p>
+      <pre>python busters.py -l smallHunt -p GreedyBustersAgent -n 10</pre>
+      <p><i>Note:</i> If you want to run this test fast you can add the following flag:</p>
+      <pre>python busters.py -l smallHunt -p GreedyBustersAgent -n 10 --frameTime=0</pre>
+      <p>Hints:</p>
+      <ul>
+        <li>When correctly implemented, your agent will thrash around a bit in order to capture a ghost.</li>
+        <li>The comments of <code>chooseAction</code> provide you with useful method calls for computing maze distance and successor positions.</li>
+        <li>Make sure to only consider the living ghosts, as described in the comments.</li>
+      </ul>
+    </div>
+
+    <hr>
+  </div>
+
+
+</body></html>

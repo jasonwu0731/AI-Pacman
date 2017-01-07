@@ -1,0 +1,541 @@
+
+<!-- saved from url=(0107)https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/tracking/v1/001/docs/inference.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>inference.py</title>
+  </head>
+  <body waid71fa0d88-5390-4b5b-a2f4-e45fa93d85e2="SA password protect entry checker">
+  <h3>inference.py (<a href="https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/tracking/v1/001/inference.py">original</a>)</h3>
+  <hr>
+  <pre><span style="color: green; font-style: italic"># inference.py
+# ------------
+# Licensing Information:  You are free to use or extend these projects for
+# educational purposes provided that (1) you do not distribute or publish
+# solutions, (2) you retain this notice, and (3) you provide clear
+# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
+# 
+# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
+# The core projects and autograders were primarily created by John DeNero
+# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and
+# Pieter Abbeel (pabbeel@cs.berkeley.edu).
+
+
+</span><span style="color: blue; font-weight: bold">import </span>itertools
+<span style="color: blue; font-weight: bold">import </span>util
+<span style="color: blue; font-weight: bold">import </span>random
+<span style="color: blue; font-weight: bold">import </span>busters
+<span style="color: blue; font-weight: bold">import </span>game
+
+<span style="color: blue; font-weight: bold">class </span>InferenceModule<span style="font-weight: bold">:
+    </span><span style="color: darkred">"""
+    An inference module tracks a belief distribution over a ghost's location.
+    This is an abstract class, which you should not modify.
+    """
+
+    </span><span style="color: green; font-style: italic">############################################
+    # Useful methods for all inference modules #
+    ############################################
+
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>ghostAgent<span style="font-weight: bold">):
+        </span><span style="color: red">"Sets the ghost agent for later access"
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>ghostAgent <span style="font-weight: bold">= </span>ghostAgent
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>index <span style="font-weight: bold">= </span>ghostAgent<span style="font-weight: bold">.</span>index
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>obs <span style="font-weight: bold">= [] </span><span style="color: green; font-style: italic"># most recent observation position
+
+    </span><span style="color: blue; font-weight: bold">def </span>getJailPosition<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span><span style="font-weight: bold">(</span><span style="color: red">2 </span><span style="font-weight: bold">* </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>ghostAgent<span style="font-weight: bold">.</span>index <span style="font-weight: bold">- </span><span style="color: red">1</span><span style="font-weight: bold">, </span><span style="color: red">1</span><span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>getPositionDistribution<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns a distribution over successor positions of the ghost from the
+        given gameState.
+
+        You must first place the ghost in the gameState, using setGhostPosition
+        below.
+        """
+        </span>ghostPosition <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getGhostPosition<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index<span style="font-weight: bold">) </span><span style="color: green; font-style: italic"># The position you set
+        </span>actionDist <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>ghostAgent<span style="font-weight: bold">.</span>getDistribution<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">)
+        </span>dist <span style="font-weight: bold">= </span>util<span style="font-weight: bold">.</span>Counter<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">for </span>action<span style="font-weight: bold">, </span>prob <span style="color: blue; font-weight: bold">in </span>actionDist<span style="font-weight: bold">.</span>items<span style="font-weight: bold">():
+            </span>successorPosition <span style="font-weight: bold">= </span>game<span style="font-weight: bold">.</span>Actions<span style="font-weight: bold">.</span>getSuccessor<span style="font-weight: bold">(</span>ghostPosition<span style="font-weight: bold">, </span>action<span style="font-weight: bold">)
+            </span>dist<span style="font-weight: bold">[</span>successorPosition<span style="font-weight: bold">] = </span>prob
+        <span style="color: blue; font-weight: bold">return </span>dist
+
+    <span style="color: blue; font-weight: bold">def </span>setGhostPosition<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">, </span>ghostPosition<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Sets the position of the ghost for this inference module to the
+        specified position in the supplied gameState.
+
+        Note that calling setGhostPosition does not change the position of the
+        ghost in the GameState object used for tracking the true progression of
+        the game.  The code in inference.py only ever receives a deep copy of
+        the GameState object which is responsible for maintaining game state,
+        not a reference to the original object.  Note also that the ghost
+        distance observations are stored at the time the GameState object is
+        created, so changing the position of the ghost will not affect the
+        functioning of observeState.
+        """
+        </span>conf <span style="font-weight: bold">= </span>game<span style="font-weight: bold">.</span>Configuration<span style="font-weight: bold">(</span>ghostPosition<span style="font-weight: bold">, </span>game<span style="font-weight: bold">.</span>Directions<span style="font-weight: bold">.</span>STOP<span style="font-weight: bold">)
+        </span>gameState<span style="font-weight: bold">.</span>data<span style="font-weight: bold">.</span>agentStates<span style="font-weight: bold">[</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index<span style="font-weight: bold">] = </span>game<span style="font-weight: bold">.</span>AgentState<span style="font-weight: bold">(</span>conf<span style="font-weight: bold">, </span><span style="color: blue; font-weight: bold">False</span><span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">return </span>gameState
+
+    <span style="color: blue; font-weight: bold">def </span>observeState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Collects the relevant noisy distance observation and pass it along."
+        </span>distances <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getNoisyGhostDistances<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">if </span>len<span style="font-weight: bold">(</span>distances<span style="font-weight: bold">) &gt;= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index<span style="font-weight: bold">: </span><span style="color: green; font-style: italic"># Check for missing observations
+            </span>obs <span style="font-weight: bold">= </span>distances<span style="font-weight: bold">[</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index <span style="font-weight: bold">- </span><span style="color: red">1</span><span style="font-weight: bold">]
+            </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>obs <span style="font-weight: bold">= </span>obs
+            <span style="color: blue">self</span><span style="font-weight: bold">.</span>observe<span style="font-weight: bold">(</span>obs<span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>initialize<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Initializes beliefs to a uniform distribution over all positions."
+        </span><span style="color: green; font-style: italic"># The legal positions do not include the ghost prison cells in the bottom left.
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>legalPositions <span style="font-weight: bold">= [</span>p <span style="color: blue; font-weight: bold">for </span>p <span style="color: blue; font-weight: bold">in </span>gameState<span style="font-weight: bold">.</span>getWalls<span style="font-weight: bold">().</span>asList<span style="font-weight: bold">(</span><span style="color: blue; font-weight: bold">False</span><span style="font-weight: bold">) </span><span style="color: blue; font-weight: bold">if </span>p<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] &gt; </span><span style="color: red">1</span><span style="font-weight: bold">]
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>initializeUniformly<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">)
+
+    </span><span style="color: green; font-style: italic">######################################
+    # Methods that need to be overridden #
+    ######################################
+
+    </span><span style="color: blue; font-weight: bold">def </span>initializeUniformly<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Sets the belief state to a uniform prior belief over all positions."
+        </span><span style="color: blue; font-weight: bold">pass
+
+    def </span>observe<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>observation<span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Updates beliefs based on the given distance observation and gameState."
+        </span><span style="color: blue; font-weight: bold">pass
+
+    def </span>elapseTime<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Updates beliefs for a time step elapsing from a gameState."
+        </span><span style="color: blue; font-weight: bold">pass
+
+    def </span>getBeliefDistribution<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns the agent's current belief state, a distribution over ghost
+        locations conditioned on all evidence so far.
+        """
+        </span><span style="color: blue; font-weight: bold">pass
+
+class </span>ExactInference<span style="font-weight: bold">(</span>InferenceModule<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    The exact dynamic inference module should use forward-algorithm updates to
+    compute the exact belief function at each time step.
+    """
+
+    </span><span style="color: blue; font-weight: bold">def </span>initializeUniformly<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Begin with a uniform distribution over ghost positions."
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>beliefs <span style="font-weight: bold">= </span>util<span style="font-weight: bold">.</span>Counter<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">for </span>p <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>legalPositions<span style="font-weight: bold">: </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>beliefs<span style="font-weight: bold">[</span>p<span style="font-weight: bold">] = </span><span style="color: red">1.0
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>beliefs<span style="font-weight: bold">.</span>normalize<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>observe<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>observation<span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Updates beliefs based on the distance observation and Pacman's position.
+
+        The noisyDistance is the estimated Manhattan distance to the ghost you
+        are tracking.
+
+        The emissionModel below stores the probability of the noisyDistance for
+        any true distance you supply. That is, it stores P(noisyDistance |
+        TrueDistance).
+
+        self.legalPositions is a list of the possible ghost positions (you
+        should only consider positions that are in self.legalPositions).
+
+        A correct implementation will handle the following special case:
+          *  When a ghost is captured by Pacman, all beliefs should be updated
+             so that the ghost appears in its prison cell, position
+             self.getJailPosition()
+
+             You can check if a ghost has been captured by Pacman by
+             checking if it has a noisyDistance of None (a noisy distance
+             of None will be returned if, and only if, the ghost is
+             captured).
+        """
+        </span>noisyDistance <span style="font-weight: bold">= </span>observation
+        emissionModel <span style="font-weight: bold">= </span>busters<span style="font-weight: bold">.</span>getObservationDistribution<span style="font-weight: bold">(</span>noisyDistance<span style="font-weight: bold">)
+        </span>pacmanPosition <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">()
+
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+        </span><span style="color: green; font-style: italic"># Replace this code with a correct observation update
+        # Be sure to handle the "jail" edge case where the ghost is eaten
+        # and noisyDistance is None
+        </span>allPossible <span style="font-weight: bold">= </span>util<span style="font-weight: bold">.</span>Counter<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">for </span>p <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>legalPositions<span style="font-weight: bold">:
+            </span>trueDistance <span style="font-weight: bold">= </span>util<span style="font-weight: bold">.</span>manhattanDistance<span style="font-weight: bold">(</span>p<span style="font-weight: bold">, </span>pacmanPosition<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">if </span>emissionModel<span style="font-weight: bold">[</span>trueDistance<span style="font-weight: bold">] &gt; </span><span style="color: red">0</span><span style="font-weight: bold">:
+                </span>allPossible<span style="font-weight: bold">[</span>p<span style="font-weight: bold">] = </span><span style="color: red">1.0
+
+        "*** END YOUR CODE HERE ***"
+
+        </span>allPossible<span style="font-weight: bold">.</span>normalize<span style="font-weight: bold">()
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>beliefs <span style="font-weight: bold">= </span>allPossible
+
+    <span style="color: blue; font-weight: bold">def </span>elapseTime<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Update self.beliefs in response to a time step passing from the current
+        state.
+
+        The transition model is not entirely stationary: it may depend on
+        Pacman's current position (e.g., for DirectionalGhost).  However, this
+        is not a problem, as Pacman's current position is known.
+
+        In order to obtain the distribution over new positions for the ghost,
+        given its previous position (oldPos) as well as Pacman's current
+        position, use this line of code:
+
+          newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))
+
+        Note that you may need to replace "oldPos" with the correct name of the
+        variable that you have used to refer to the previous ghost position for
+        which you are computing this distribution. You will need to compute
+        multiple position distributions for a single update.
+
+        newPosDist is a util.Counter object, where for each position p in
+        self.legalPositions,
+
+        newPostDist[p] = Pr( ghost is at position p at time t + 1 | ghost is at position oldPos at time t )
+
+        (and also given Pacman's current position).  You may also find it useful
+        to loop over key, value pairs in newPosDist, like:
+
+          for newPos, prob in newPosDist.items():
+            ...
+
+        *** GORY DETAIL AHEAD ***
+
+        As an implementation detail (with which you need not concern yourself),
+        the line of code at the top of this comment block for obtaining
+        newPosDist makes use of two helper methods provided in InferenceModule
+        above:
+
+          1) self.setGhostPosition(gameState, ghostPosition)
+              This method alters the gameState by placing the ghost we're
+              tracking in a particular position.  This altered gameState can be
+              used to query what the ghost would do in this position.
+
+          2) self.getPositionDistribution(gameState)
+              This method uses the ghost agent to determine what positions the
+              ghost will move to from the provided gameState.  The ghost must be
+              placed in the gameState with a call to self.setGhostPosition
+              above.
+
+        It is worthwhile, however, to understand why these two helper methods
+        are used and how they combine to give us a belief distribution over new
+        positions after a time update from a particular position.
+        """
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>getBeliefDistribution<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>beliefs
+
+<span style="color: blue; font-weight: bold">class </span>ParticleFilter<span style="font-weight: bold">(</span>InferenceModule<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    A particle filter for approximately tracking a single ghost.
+
+    Useful helper functions will include random.choice, which chooses an element
+    from a list uniformly at random, and util.sample, which samples a key from a
+    Counter by treating its values as probabilities.
+    """
+
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>ghostAgent<span style="font-weight: bold">, </span>numParticles<span style="font-weight: bold">=</span><span style="color: red">300</span><span style="font-weight: bold">):
+        </span>InferenceModule<span style="font-weight: bold">.</span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>ghostAgent<span style="font-weight: bold">)</span>;
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>setNumParticles<span style="font-weight: bold">(</span>numParticles<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>setNumParticles<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>numParticles<span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>numParticles <span style="font-weight: bold">= </span>numParticles
+
+
+    <span style="color: blue; font-weight: bold">def </span>initializeUniformly<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Initializes a list of particles. Use self.numParticles for the number of
+        particles. Use self.legalPositions for the legal board positions where a
+        particle could be located.  Particles should be evenly (not randomly)
+        distributed across positions in order to ensure a uniform prior.
+
+        Note: the variable you store your particles in must be a list; a list is
+        simply a collection of unweighted variables (positions in this case).
+        Storing your particles as a Counter (where there could be an associated
+        weight with each position) is incorrect and may produce errors.
+        """
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+
+    </span><span style="color: blue; font-weight: bold">def </span>observe<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>observation<span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Update beliefs based on the given distance observation. Make sure to
+        handle the special case where all particles have weight 0 after
+        reweighting based on observation. If this happens, resample particles
+        uniformly at random from the set of legal positions
+        (self.legalPositions).
+
+        A correct implementation will handle two special cases:
+          1) When a ghost is captured by Pacman, all particles should be updated
+             so that the ghost appears in its prison cell,
+             self.getJailPosition()
+
+             As before, you can check if a ghost has been captured by Pacman by
+             checking if it has a noisyDistance of None.
+
+          2) When all particles receive 0 weight, they should be recreated from
+             the prior distribution by calling initializeUniformly. The total
+             weight for a belief distribution can be found by calling totalCount
+             on a Counter object
+
+        util.sample(Counter object) is a helper method to generate a sample from
+        a belief distribution.
+
+        You may also want to use util.manhattanDistance to calculate the
+        distance between a particle and Pacman's position.
+        """
+        </span>noisyDistance <span style="font-weight: bold">= </span>observation
+        emissionModel <span style="font-weight: bold">= </span>busters<span style="font-weight: bold">.</span>getObservationDistribution<span style="font-weight: bold">(</span>noisyDistance<span style="font-weight: bold">)
+        </span>pacmanPosition <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">()
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>elapseTime<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Update beliefs for a time step elapsing.
+
+        As in the elapseTime method of ExactInference, you should use:
+
+          newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))
+
+        to obtain the distribution over new positions for the ghost, given its
+        previous position (oldPos) as well as Pacman's current position.
+
+        util.sample(Counter object) is a helper method to generate a sample from
+        a belief distribution.
+        """
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>getBeliefDistribution<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Return the agent's current belief state, a distribution over ghost
+        locations conditioned on all evidence and time passage. This method
+        essentially converts a list of particles into a belief distribution (a
+        Counter object)
+        """
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+</span><span style="color: blue; font-weight: bold">class </span>MarginalInference<span style="font-weight: bold">(</span>InferenceModule<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    A wrapper around the JointInference module that returns marginal beliefs
+    about ghosts.
+    """
+
+    </span><span style="color: blue; font-weight: bold">def </span>initializeUniformly<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Set the belief state to an initial, prior value."
+        </span><span style="color: blue; font-weight: bold">if </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index <span style="font-weight: bold">== </span><span style="color: red">1</span><span style="font-weight: bold">:
+            </span>jointInference<span style="font-weight: bold">.</span>initialize<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>legalPositions<span style="font-weight: bold">)
+        </span>jointInference<span style="font-weight: bold">.</span>addGhostAgent<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>ghostAgent<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>observeState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Update beliefs based on the given distance observation and gameState."
+        </span><span style="color: blue; font-weight: bold">if </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index <span style="font-weight: bold">== </span><span style="color: red">1</span><span style="font-weight: bold">:
+            </span>jointInference<span style="font-weight: bold">.</span>observeState<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>elapseTime<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Update beliefs for a time step elapsing from a gameState."
+        </span><span style="color: blue; font-weight: bold">if </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index <span style="font-weight: bold">== </span><span style="color: red">1</span><span style="font-weight: bold">:
+            </span>jointInference<span style="font-weight: bold">.</span>elapseTime<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>getBeliefDistribution<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: red">"Returns the marginal belief over a particular ghost by summing out the others."
+        </span>jointDistribution <span style="font-weight: bold">= </span>jointInference<span style="font-weight: bold">.</span>getBeliefDistribution<span style="font-weight: bold">()
+        </span>dist <span style="font-weight: bold">= </span>util<span style="font-weight: bold">.</span>Counter<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">for </span>t<span style="font-weight: bold">, </span>prob <span style="color: blue; font-weight: bold">in </span>jointDistribution<span style="font-weight: bold">.</span>items<span style="font-weight: bold">():
+            </span>dist<span style="font-weight: bold">[</span>t<span style="font-weight: bold">[</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>index <span style="font-weight: bold">- </span><span style="color: red">1</span><span style="font-weight: bold">]] += </span>prob
+        <span style="color: blue; font-weight: bold">return </span>dist
+
+<span style="color: blue; font-weight: bold">class </span>JointParticleFilter<span style="font-weight: bold">:
+    </span><span style="color: darkred">"""
+    JointParticleFilter tracks a joint distribution over tuples of all ghost
+    positions.
+    """
+
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>numParticles<span style="font-weight: bold">=</span><span style="color: red">600</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>setNumParticles<span style="font-weight: bold">(</span>numParticles<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>setNumParticles<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>numParticles<span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>numParticles <span style="font-weight: bold">= </span>numParticles
+
+    <span style="color: blue; font-weight: bold">def </span>initialize<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">, </span>legalPositions<span style="font-weight: bold">):
+        </span><span style="color: red">"Stores information about the game, then initializes particles."
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>numGhosts <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getNumAgents<span style="font-weight: bold">() - </span><span style="color: red">1
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>ghostAgents <span style="font-weight: bold">= []
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>legalPositions <span style="font-weight: bold">= </span>legalPositions
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>initializeParticles<span style="font-weight: bold">()
+
+    </span><span style="color: blue; font-weight: bold">def </span>initializeParticles<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Initialize particles to be consistent with a uniform prior.
+
+        Each particle is a tuple of ghost positions. Use self.numParticles for
+        the number of particles. You may find the `itertools` package helpful.
+        Specifically, you will need to think about permutations of legal ghost
+        positions, with the additional understanding that ghosts may occupy the
+        same space. Look at the `itertools.product` function to get an
+        implementation of the Cartesian product.
+
+        Note: If you use itertools, keep in mind that permutations are not
+        returned in a random order; you must shuffle the list of permutations in
+        order to ensure even placement of particles across the board. Use
+        self.legalPositions to obtain a list of positions a ghost may occupy.
+
+        Note: the variable you store your particles in must be a list; a list is
+        simply a collection of unweighted variables (positions in this case).
+        Storing your particles as a Counter (where there could be an associated
+        weight with each position) is incorrect and may produce errors.
+        """
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+
+    </span><span style="color: blue; font-weight: bold">def </span>addGhostAgent<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>agent<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Each ghost agent is registered separately and stored (in case they are
+        different).
+        """
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>ghostAgents<span style="font-weight: bold">.</span>append<span style="font-weight: bold">(</span>agent<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>getJailPosition<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>i<span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span><span style="font-weight: bold">(</span><span style="color: red">2 </span><span style="font-weight: bold">* </span>i <span style="font-weight: bold">+ </span><span style="color: red">1</span><span style="font-weight: bold">, </span><span style="color: red">1</span><span style="font-weight: bold">)</span>;
+
+    <span style="color: blue; font-weight: bold">def </span>observeState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Resamples the set of particles using the likelihood of the noisy
+        observations.
+
+        To loop over the ghosts, use:
+
+          for i in range(self.numGhosts):
+            ...
+
+        A correct implementation will handle two special cases:
+          1) When a ghost is captured by Pacman, all particles should be updated
+             so that the ghost appears in its prison cell, position
+             self.getJailPosition(i) where `i` is the index of the ghost.
+
+             As before, you can check if a ghost has been captured by Pacman by
+             checking if it has a noisyDistance of None.
+
+          2) When all particles receive 0 weight, they should be recreated from
+             the prior distribution by calling initializeParticles. After all
+             particles are generated randomly, any ghosts that are eaten (have
+             noisyDistance of None) must be changed to the jail Position. This
+             will involve changing each particle if a ghost has been eaten.
+
+        self.getParticleWithGhostInJail is a helper method to edit a specific
+        particle. Since we store particles as tuples, they must be converted to
+        a list, edited, and then converted back to a tuple. This is a common
+        operation when placing a ghost in jail.
+        """
+        </span>pacmanPosition <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">()
+        </span>noisyDistances <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getNoisyGhostDistances<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">if </span>len<span style="font-weight: bold">(</span>noisyDistances<span style="font-weight: bold">) &lt; </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>numGhosts<span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">return
+        </span>emissionModels <span style="font-weight: bold">= [</span>busters<span style="font-weight: bold">.</span>getObservationDistribution<span style="font-weight: bold">(</span>dist<span style="font-weight: bold">) </span><span style="color: blue; font-weight: bold">for </span>dist <span style="color: blue; font-weight: bold">in </span>noisyDistances<span style="font-weight: bold">]
+
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+
+    </span><span style="color: blue; font-weight: bold">def </span>getParticleWithGhostInJail<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>particle<span style="font-weight: bold">, </span>ghostIndex<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Takes a particle (as a tuple of ghost positions) and returns a particle
+        with the ghostIndex'th ghost in jail.
+        """
+        </span>particle <span style="font-weight: bold">= </span>list<span style="font-weight: bold">(</span>particle<span style="font-weight: bold">)
+        </span>particle<span style="font-weight: bold">[</span>ghostIndex<span style="font-weight: bold">] = </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>getJailPosition<span style="font-weight: bold">(</span>ghostIndex<span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">return </span>tuple<span style="font-weight: bold">(</span>particle<span style="font-weight: bold">)
+
+    </span><span style="color: blue; font-weight: bold">def </span>elapseTime<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Samples each particle's next state based on its current state and the
+        gameState.
+
+        To loop over the ghosts, use:
+
+          for i in range(self.numGhosts):
+            ...
+
+        Then, assuming that `i` refers to the index of the ghost, to obtain the
+        distributions over new positions for that single ghost, given the list
+        (prevGhostPositions) of previous positions of ALL of the ghosts, use
+        this line of code:
+
+          newPosDist = getPositionDistributionForGhost(
+             setGhostPositions(gameState, prevGhostPositions), i, self.ghostAgents[i]
+          )
+
+        Note that you may need to replace `prevGhostPositions` with the correct
+        name of the variable that you have used to refer to the list of the
+        previous positions of all of the ghosts, and you may need to replace `i`
+        with the variable you have used to refer to the index of the ghost for
+        which you are computing the new position distribution.
+
+        As an implementation detail (with which you need not concern yourself),
+        the line of code above for obtaining newPosDist makes use of two helper
+        functions defined below in this file:
+
+          1) setGhostPositions(gameState, ghostPositions)
+              This method alters the gameState by placing the ghosts in the
+              supplied positions.
+
+          2) getPositionDistributionForGhost(gameState, ghostIndex, agent)
+              This method uses the supplied ghost agent to determine what
+              positions a ghost (ghostIndex) controlled by a particular agent
+              (ghostAgent) will move to in the supplied gameState.  All ghosts
+              must first be placed in the gameState using setGhostPositions
+              above.
+
+              The ghost agent you are meant to supply is
+              self.ghostAgents[ghostIndex-1], but in this project all ghost
+              agents are always the same.
+        """
+        </span>newParticles <span style="font-weight: bold">= []
+        </span><span style="color: blue; font-weight: bold">for </span>oldParticle <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>particles<span style="font-weight: bold">:
+            </span>newParticle <span style="font-weight: bold">= </span>list<span style="font-weight: bold">(</span>oldParticle<span style="font-weight: bold">) </span><span style="color: green; font-style: italic"># A list of ghost positions
+            # now loop through and update each entry in newParticle...
+
+            </span><span style="color: red">"*** YOUR CODE HERE ***"
+
+            "*** END YOUR CODE HERE ***"
+            </span>newParticles<span style="font-weight: bold">.</span>append<span style="font-weight: bold">(</span>tuple<span style="font-weight: bold">(</span>newParticle<span style="font-weight: bold">))
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>particles <span style="font-weight: bold">= </span>newParticles
+
+    <span style="color: blue; font-weight: bold">def </span>getBeliefDistribution<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+</span><span style="color: green; font-style: italic"># One JointInference module is shared globally across instances of MarginalInference
+</span>jointInference <span style="font-weight: bold">= </span>JointParticleFilter<span style="font-weight: bold">()
+
+</span><span style="color: blue; font-weight: bold">def </span>getPositionDistributionForGhost<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">, </span>ghostIndex<span style="font-weight: bold">, </span>agent<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
+    Returns the distribution over positions for a ghost, using the supplied
+    gameState.
+    """
+    </span><span style="color: green; font-style: italic"># index 0 is pacman, but the students think that index 0 is the first ghost.
+    </span>ghostPosition <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getGhostPosition<span style="font-weight: bold">(</span>ghostIndex<span style="font-weight: bold">+</span><span style="color: red">1</span><span style="font-weight: bold">)
+    </span>actionDist <span style="font-weight: bold">= </span>agent<span style="font-weight: bold">.</span>getDistribution<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">)
+    </span>dist <span style="font-weight: bold">= </span>util<span style="font-weight: bold">.</span>Counter<span style="font-weight: bold">()
+    </span><span style="color: blue; font-weight: bold">for </span>action<span style="font-weight: bold">, </span>prob <span style="color: blue; font-weight: bold">in </span>actionDist<span style="font-weight: bold">.</span>items<span style="font-weight: bold">():
+        </span>successorPosition <span style="font-weight: bold">= </span>game<span style="font-weight: bold">.</span>Actions<span style="font-weight: bold">.</span>getSuccessor<span style="font-weight: bold">(</span>ghostPosition<span style="font-weight: bold">, </span>action<span style="font-weight: bold">)
+        </span>dist<span style="font-weight: bold">[</span>successorPosition<span style="font-weight: bold">] = </span>prob
+    <span style="color: blue; font-weight: bold">return </span>dist
+
+<span style="color: blue; font-weight: bold">def </span>setGhostPositions<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">, </span>ghostPositions<span style="font-weight: bold">):
+    </span><span style="color: red">"Sets the position of all ghosts to the values in ghostPositionTuple."
+    </span><span style="color: blue; font-weight: bold">for </span>index<span style="font-weight: bold">, </span>pos <span style="color: blue; font-weight: bold">in </span>enumerate<span style="font-weight: bold">(</span>ghostPositions<span style="font-weight: bold">):
+        </span>conf <span style="font-weight: bold">= </span>game<span style="font-weight: bold">.</span>Configuration<span style="font-weight: bold">(</span>pos<span style="font-weight: bold">, </span>game<span style="font-weight: bold">.</span>Directions<span style="font-weight: bold">.</span>STOP<span style="font-weight: bold">)
+        </span>gameState<span style="font-weight: bold">.</span>data<span style="font-weight: bold">.</span>agentStates<span style="font-weight: bold">[</span>index <span style="font-weight: bold">+ </span><span style="color: red">1</span><span style="font-weight: bold">] = </span>game<span style="font-weight: bold">.</span>AgentState<span style="font-weight: bold">(</span>conf<span style="font-weight: bold">, </span><span style="color: blue; font-weight: bold">False</span><span style="font-weight: bold">)
+    </span><span style="color: blue; font-weight: bold">return </span>gameState
+
+
+  </pre>
+  
+  
+  </body></html>

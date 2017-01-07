@@ -1,0 +1,69 @@
+
+<!-- saved from url=(0114)https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/reinforcement/v1/001/docs/environment.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>environment.py</title>
+  </head>
+  <body>
+  <h3>environment.py (<a href="https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/reinforcement/v1/001/environment.py">original</a>)</h3>
+  <hr>
+  <pre><span style="color: green; font-style: italic"># environment.py
+# --------------
+# Licensing Information:  You are free to use or extend these projects for
+# educational purposes provided that (1) you do not distribute or publish
+# solutions, (2) you retain this notice, and (3) you provide clear
+# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
+# 
+# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
+# The core projects and autograders were primarily created by John DeNero
+# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and
+# Pieter Abbeel (pabbeel@cs.berkeley.edu).
+
+
+#!/usr/bin/python
+
+</span><span style="color: blue; font-weight: bold">class </span>Environment<span style="font-weight: bold">:
+
+    </span><span style="color: blue; font-weight: bold">def </span>getCurrentState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+        Returns the current state of enviornment
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>getPossibleActions<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+          Returns possible actions the agent
+          can take in the given state. Can
+          return the empty list if we are in
+          a terminal state.
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>doAction<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>action<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+          Performs the given action in the current
+          environment state and updates the enviornment.
+
+          Returns a (reward, nextState) pair
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>reset<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+          Resets the current state to the start state
+        """
+        </span>abstract
+
+    <span style="color: blue; font-weight: bold">def </span>isTerminal<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
+          Has the enviornment entered a terminal
+          state? This means there are no successors
+        """
+        </span>state <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>getCurrentState<span style="font-weight: bold">()
+        </span>actions <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>getPossibleActions<span style="font-weight: bold">(</span>state<span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">return </span>len<span style="font-weight: bold">(</span>actions<span style="font-weight: bold">) == </span><span style="color: red">0
+</span>
+  </pre>
+  
+  
+  </body></html>

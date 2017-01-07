@@ -1,0 +1,271 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>Project 3: Reinforcement Learning</title>
+  <link rel="stylesheet" href="project.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="navigation.css" type="text/css" charset="utf-8">
+</head>
+<body>
+
+  <div id="content">
+
+    <div class="project">
+      <h2 class="project_title">Project 3: Reinforcement Learning</h2>
+      <hr>
+      <h3>Table of Contents</h3>
+      <ul>
+        <li><a href="#Introduction">Introduction</a></li>
+        <li><a href="#Welcome">Welcome</a></li>
+        <li><a href="#Q1">Q1: Value Iteration</a></li>
+        <li><a href="#Q2">Q2: Bridge Crossing Analysis</a></li>
+        <li><a href="#Q3">Q3: Policies</a></li>
+        <li><a href="#Q4">Q4: Q-Learning</a></li>
+        <li><a href="#Q5">Q5: Epsilon Greedy</a></li>
+        <li><a href="#Q6">Q6: Bridge Crossing Revisited</a></li>
+        <li><a href="#Q7">Q7: Q-Learning and Pacman</a></li>
+        <li><a href="#Q8">Q8: Approximate Q-Learning</a></li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <blockquote><center><img src="capsule.png" width="50%" alt="capsuleClassic layout"></center>
+        <p></p>
+        <center>Pacman seeks reward.<br> Should he eat or should he run?<br> When in doubt, Q-learn.</center>
+        <p></p>
+      </blockquote>
+      <h3><a name="Introduction"></a>Introduction</h3>
+      <p>In this project, you will implement value iteration and Q-learning. You will test your agents first on Gridworld (from class), then apply them to a simulated robot controller (Crawler) and Pacman.</p>
+      <p></p>
+      <table class="intro" border="0" cellpadding="10">
+        <tbody>
+          <tr>
+            <td colspan="2"><b>Files you'll edit:</b></td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/valueIterationAgents.html">valueIterationAgents.py</a></code></td>
+            <td>A value iteration agent for solving known MDPs.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/qlearningAgents.html">qlearningAgents.py</a></code></td>
+            <td>Q-learning agents for Gridworld, Crawler and Pacman.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/analysis.html">analysis.py</a></code></td>
+            <td>A file to put your answers to questions given in the project.</td>
+          </tr>
+          <tr>
+            <td colspan="2"><b>Files you should read but NOT edit:</b></td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/mdp.html">mdp.py</a></code></td>
+            <td>Defines methods on general MDPs.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/learningAgents.html">learningAgents.py</a></code></td>
+            <td>Defines the base classes <code>ValueEstimationAgent</code> and <code>QLearningAgent</code>, which your agents will extend.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/util.html">util.py</a></code></td>
+            <td>Utilities, including <code>util.Counter</code>, which is particularly useful for Q-learners.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/gridworld.html">gridworld.py</a></code></td>
+            <td>The Gridworld implementation.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/featureExtractors.html">featureExtractors.py</a></code></td>
+            <td>Classes for extracting features on (state,action) pairs. Used for the approximate Q-learning agent (in qlearningAgents.py).</td>
+          </tr>
+          <tr>
+            <td colspan="2"><b>Files you can ignore:</b></td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/environment.html">environment.py</a></code></td>
+            <td>Abstract class for general reinforcement learning environments. Used by <code><a href="docs/gridworld.html">gridworld.py</a></code>.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/graphicsGridworldDisplay.html">graphicsGridworldDisplay.py</a></code></td>
+            <td>Gridworld graphical display.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/graphicsUtils.html">graphicsUtils.py</a></code></td>
+            <td>Graphics utilities.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/textGridworldDisplay.html">textGridworldDisplay.py</a></code></td>
+            <td>Plug-in for the Gridworld text interface.</td>
+          </tr>
+          <tr>
+            <td><code><a href="docs/crawler.html">crawler.py</a></code></td>
+            <td>The crawler code and test harness. You will run this but not edit it.</td>
+          </tr>
+          <tr>
+            <td><code><a href="graphicsCrawlerDisplay.html">graphicsCrawlerDisplay.py</a></code></td>
+            <td>GUI for the crawler robot.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p></p>
+	  <p><strong>Deadline:</strong> 2017 / 01 / 05 </p>
+      <p><strong>Files to Edit and Submit:</strong> You will fill in portions of <code><a href="docs/valueIterationAgents.html">valueIterationAgents.py</a></code>, <code><a href="docs/qlearningAgents.html">qlearningAgents.py</a></code>, and <code><a href="docs/analysis.html">analysis.py</a></code> during the assignment. You should submit these files with your code and comments. Please <em>do not</em> change the other files in this distribution or submit any of our original files other than these files.</p>
+      <p><strong>Evaluation:</strong> Your code will be autograded for technical correctness. Please <em>do not</em> change the names of any provided functions or classes within the code, or you will wreak havoc on the autograder. However, the correctness of your implementation -- not the autograder's judgements -- will be the final judge of your score. If necessary, we will review and grade assignments individually to ensure that you receive due credit for your work.</p>
+      <p><strong>Getting Help:</strong> You are not alone! If you find yourself stuck on something, contact the course staff (TA) for help. We want these projects to be rewarding and instructional, not frustrating and demoralizing. But, we don't know when or how to help unless you ask. One more piece of advice: if you don't know what a variable does or what kind of values it takes, print it out.</p>
+      <p><strong>Forum:</strong> Post your questions (but not project solutions) and discuss with classmates on the homework forum. Please be careful not to post spoilers to the forum.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Welcome"></a>MDPs</h3>
+      <p>To get started, run Gridworld in manual control mode, which uses the arrow keys:</p>
+      <pre>python gridworld.py -m</pre>
+      <p>You will see the two-exit layout from class. The blue dot is the agent. Note that when you press <em>up</em>, the agent only actually moves north 80% of the time. Such is the life of a Gridworld agent!</p>
+      <p>You can control many aspects of the simulation. A full list of options is available by running:</p>
+      <pre>python gridworld.py -h</pre>
+      <p>The default agent moves randomly</p>
+      <pre>python gridworld.py -g MazeGrid</pre>
+      <p>You should see the random agent bounce around the grid until it happens upon an exit. Not the finest hour for an AI agent.</p>
+      <p><em>Note:</em> The Gridworld MDP is such that you first must enter a pre-terminal state (the double boxes shown in the GUI) and then take the special 'exit' action before the episode actually ends (in the true terminal state called <code>TERMINAL_STATE</code>, which is not shown in the GUI). If you run an episode manually, your total return may be less than you expected, due to the discount rate (<code>-d</code> to change; 0.9 by default).</p>
+      <p>Look at the console output that accompanies the graphical output (or use <code>-t</code> for all text). You will be told about each transition the agent experiences (to turn this off, use <code>-q</code>).</p>
+      <p>As in Pacman, positions are represented by <code>(x,y)</code> Cartesian coordinates and any arrays are indexed by <code>[x][y]</code>, with <code>'north'</code> being the direction of increasing <code>y</code>, etc. By default, most transitions will receive a reward of zero, though you can change this with the living reward option (<code>-r</code>).</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q1"></a>Question 1 (1.5 points): Value Iteration</h3>
+      <p>Write a value iteration agent in <code>ValueIterationAgent</code>, which has been partially specified for you in <code><a href="docs/valueIterationAgents.html">valueIterationAgents.py</a></code>. Your value iteration agent is an offline planner, not a reinforcement learning agent, and so the relevant training option is the number of iterations of value iteration it should run (option <code>-i</code>) in its initial planning phase. <code>ValueIterationAgent</code> takes an MDP on construction and runs value iteration for the specified number of iterations before the constructor returns.</p>
+      <p>Value iteration computes k-step estimates of the optimal values, V<sub>k</sub>. In addition to running value iteration, implement the following methods for <code>ValueIterationAgent</code> using V<sub>k</sub>.</p>
+      <ul>
+        <li><code>computeActionFromValues(state)</code> computes the best action according to the value function given by <code>self.values</code>.</li>
+        <li><code>computeQValueFromValues(state, action)</code> returns the Q-value of the (state, action) pair given by the value function given by <code>self.values</code>.</li>
+      </ul>
+      <p>These quantities are all displayed in the GUI: values are numbers in squares, Q-values are numbers in square quarters, and policies are arrows out from each square.</p>
+      <p><em>Important:</em> Use the "batch" version of value iteration where each vector V<sub>k</sub> is computed from a fixed vector V<sub>k-1</sub> (like in lecture), not the "online" version where one single weight vector is updated in place. This means that when a state's value is updated in iteration k based on the values of its successor states, the successor state values used in the value update computation should be those from iteration k-1 (even if some of the successor states had already been updated in iteration k). The difference is discussed in <a href="http://www.cs.ualberta.ca/~sutton/book/ebook/node41.html">Sutton &amp; Barto</a> in the 6th paragraph of chapter 4.1.</p>
+      <p><em>Note:</em> A policy synthesized from values of depth k (which reflect the next k rewards) will actually reflect the next k+1 rewards (i.e. you return &pi;<sub>k+1</sub>).  Similarly, the q-values will also reflect one more reward than the values (i.e. you return Q<sub>k+1</sub>).  You may assume that 100 iterations is enough for convergence in the questions below. 
+      <p><em>Hint:</em> Use the <code>util.Counter</code> class in <code>util.py</code>, which is a dictionary with a default value of zero. Methods such as <code>totalCount</code> should simplify your code. However, be careful with <code>argMax</code>: the actual argmax you want may be a key not in the counter!</p>
+      <p><em>Note:</em> Make sure to handle the case when a state has no available actions in an MDP (think about what this means for future rewards).</p>
+      <p>The following command loads your <code>ValueIterationAgent</code>, which will compute a policy and execute it 10 times. Press a key to cycle through values, Q-values, and the simulation. You should find that the value of the start state (<code>V(start)</code>, which you can read off of the GUI) and the empirical resulting average reward (printed after the 10 rounds of execution finish) are quite close.</p>
+      <pre>python gridworld.py -a value -i 100 -k 10</pre>
+      <p><em>Hint:</em> On the default BookGrid, running value iteration for 5 iterations should give you this output:</p>
+      <pre>python gridworld.py -a value -i 5</pre>
+      <center><img src="value.png" width="50%" alt="value iteration with k=5"></center>
+      <p>Your value iteration agent will be graded on a new grid. We will check your values, Q-values, and policies after fixed numbers of iterations and at convergence (e.g. after 100 iterations).</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q2"></a>Question 2 (0.5 point): Bridge Crossing Analysis</h3>
+      <p><code>BridgeGrid</code> is a grid world map with the a low-reward terminal state and a high-reward terminal state separated by a narrow "bridge", on either side of which is a chasm of high negative reward. The agent starts near the low-reward state. With the default discount of 0.9 and the default noise of 0.2, the optimal policy does not cross the bridge. Change only ONE of the discount and noise parameters so that the optimal policy causes the agent to attempt to cross the bridge. Put your answer in <code>question2()</code> of <code>analysis.py</code>. (Noise refers to how often an agent ends up in an unintended successor state when they perform an action.) The default corresponds to:</p>
+      <pre>python gridworld.py -a value -i 100 -g BridgeGrid --discount 0.9 --noise 0.2</pre>
+      <center><img src="value-q2.png" width="50%" alt="value iteration with k=100"></center>
+	  <p>We will check that you only changed one of the given parameters, and that with this change, a correct value iteration agent should cross the bridge.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q3"></a>Question 3 (1 points): Policies</h3>
+      <p>Consider the <code>DiscountGrid</code> layout, shown below. This grid has two terminal states with positive payoff (in the middle row), a close exit with payoff +1 and a distant exit with payoff +10. The bottom row of the grid consists of terminal states with negative payoff (shown in red); each state in this "cliff" region has payoff -10. The starting state is the yellow square. We distinguish between two types of paths: (1) paths that "risk the cliff" and travel near the bottom row of the grid; these paths are shorter but risk earning a large negative payoff, and are represented by the red arrow in the figure below. (2) paths that "avoid the cliff" and travel along the top edge of the grid. These paths are longer but are less likely to incur huge negative payoffs. These paths are represented by the green arrow in the figure below.</p>
+      <center><img src="discountgrid.png" width="50%" alt="DiscountGrid"></center>
+      <p>In this question, you will choose settings of the discount, noise, and living reward parameters for this MDP to produce optimal policies of several different types. Your setting of the parameter values for each part should have the property that, if your agent followed its optimal policy without being subject to any noise, it would exhibit the given behavior. If a particular behavior is not achieved for any setting of the parameters, assert that the policy is impossible by returning the string <code>'NOT POSSIBLE'</code>.</p>
+      <p>Here are the optimal policy types you should attempt to produce:</p>
+      <ol type="a"><ol type="a">
+        <li>Prefer the close exit (+1), risking the cliff (-10)</li>
+        <li>Prefer the close exit (+1), but avoiding the cliff (-10)</li>
+        <li>Prefer the distant exit (+10), risking the cliff (-10)</li>
+        <li>Prefer the distant exit (+10), avoiding the cliff (-10)</li>
+        <li>Avoid both exits and the cliff (so an episode should never terminate)</li>
+      </ol></ol>
+      <p></p>
+      <p><code>question3a()</code> through <code>question3e()</code> should each return a 3-item tuple of (discount, noise, living reward) in <code>analysis.py</code>.</p>
+      <p><em>Note:</em> You can check your policies in the GUI. For example, using a correct answer to 3(a), the arrow in (0,1) should point east, the arrow in (1,1) should also point east, and the arrow in (2,1) should point north.</p>
+      <p><em>Note:</em> On some machines you may not see an arrow. In this case, press a button on the keyboard to switch to qValue display, and mentally calculate the policy by taking the arg max of the available qValues for each state.</p>
+      <p> We will check that the desired policy is returned in each case.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q4"></a>Question 4 (1 points): Q-Learning</h3>
+      <p>Note that your value iteration agent does not actually learn from experience. Rather, it ponders its MDP model to arrive at a complete policy before ever interacting with a real environment. When it does interact with the environment, it simply follows the precomputed policy (e.g. it becomes a reflex agent). This distinction may be subtle in a simulated environment like a Gridword, but it's very important in the real world, where the real MDP is not available.</p>
+      <p>You will now write a Q-learning agent, which does very little on construction, but instead learns by trial and error from interactions with the environment through its <code>update(state, action, nextState, reward)</code> method. A stub of a Q-learner is specified in <code>QLearningAgent</code> in <code><a href="docs/qlearningAgents.html">qlearningAgents.py</a></code>, and you can select it with the option <code>'-a q'</code>. For this question, you must implement the <code>update</code>, <code>computeValueFromQValues</code>, <code>getQValue</code>, and <code>computeActionFromQValues</code> methods.</p>
+      <p><em>Note:</em> For <code>computeActionFromQValues</code>, you should break ties randomly for better behavior. The <code>random.choice()</code> function will help. In a particular state, actions that your agent <em>hasn't</em> seen before still have a Q-value, specifically a Q-value of zero, and if all of the actions that your agent <em>has</em> seen before have a negative Q-value, an unseen action may be optimal.</p>
+      <p><em>Important:</em> Make sure that in your <code>computeValueFromQValues</code> and <code>computeActionFromQValues</code> functions, you only access Q values by calling <code>getQValue</code> . This abstraction will be useful for question 8 when you override <code>getQValue</code> to use features of state-action pairs rather than state-action pairs directly.</p>
+      <p>With the Q-learning update in place, you can watch your Q-learner learn under manual control, using the keyboard:</p>
+      <pre>python gridworld.py -a q -k 5 -m</pre>
+	  <p>We will run your Q-learning agent and check that it learns the same Q-values and policy as our reference implementation when each is presented with the same set of examples. </p>
+      <p>Recall that <code>-k</code> will control the number of episodes your agent gets to learn. Watch how the agent learns about the state it was just in, not the one it moves to, and "leaves learning in its wake." Hint: to help with debugging, you can turn off noise by using the <code>--noise 0.0</code> parameter (though this obviously makes Q-learning less interesting). If you manually steer Pacman north and then east along the optimal path for four episodes, you should see the following Q-values: </p>
+      <center><img src="q-learning.png" width="50%" alt="QLearning"></center>
+      <p></p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q5"></a>Question 5 (1 points): Epsilon Greedy</h3>
+      <p>Complete your Q-learning agent by implementing epsilon-greedy action selection in <code>getAction</code>, meaning it chooses random actions an epsilon fraction of the time, and follows its current best Q-values otherwise. Note that choosing a random action may result in choosing the best action - that is, you should not choose a random sub-optimal action, but rather <i>any</i> random legal action.</p>
+      <pre>python gridworld.py -a q -k 100 </pre>
+      <p>Your final Q-values should resemble those of your value iteration agent, especially along well-traveled paths. However, your average returns will be lower than the Q-values predict because of the random actions and the initial learning phase.</p>
+      <p>You can choose an element from a list uniformly at random by calling the <code>random.choice</code> function. You can simulate a binary variable with probability <code>p</code> of success by using <code>util.flipCoin(p)</code>, which returns <code>True</code> with probability <code>p</code> and <code>False</code> with probability <code>1-p</code>.</p>
+      <p>With no additional code, you should now be able to run a Q-learning crawler robot:</p>
+      <pre>python crawler.py</pre>
+      <p>If this doesn't work, you've probably written some code too specific to the <code>GridWorld</code> problem and you should make it more general to all MDPs.</p>
+      <p>This will invoke the crawling robot from class using your Q-learner. Play around with the various learning parameters to see how they affect the agent's policies and actions. Note that the step delay is a parameter of the simulation, whereas the learning rate and epsilon are parameters of your learning algorithm, and the discount factor is a property of the environment.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q6"></a>Question 6 (0.5 point): Bridge Crossing Revisited</h3>
+      <p>First, train a completely random Q-learner with the default learning rate on the noiseless BridgeGrid for 50 episodes and observe whether it finds the optimal policy.</p>
+      <pre>python gridworld.py -a q -k 50 -n 0 -g BridgeGrid -e 1</pre>
+      <p>Now try the same experiment with an epsilon of 0. Is there an epsilon and a learning rate for which it is highly likely (greater than 99%) that the optimal policy will be learned after 50 iterations? <code>question6()</code> in <code>analysis.py</code> should return EITHER a 2-item tuple of <code>(epsilon, learning rate)</code> OR the string <code>'NOT POSSIBLE'</code> if there is none. Epsilon is controlled by <code>-e</code>, learning rate by <code>-l</code>.</p>
+      <p><em>Note:</em> Your response should be not depend on the exact tie-breaking mechanism used to choose actions. This means your answer should be correct even if for instance we rotated the entire bridge grid world 90 degrees.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q7"></a>Question 7 (0.5 point): Q-Learning and Pacman</h3>
+      <p>Time to play some Pacman! Pacman will play games in two phases. In the first phase, <em>training</em>, Pacman will begin to learn about the values of positions and actions. Because it takes a very long time to learn accurate Q-values even for tiny grids, Pacman's training games run in quiet mode by default, with no GUI (or console) display. Once Pacman's training is complete, he will enter <em>testing</em> mode. When testing, Pacman's <code>self.epsilon</code> and <code>self.alpha</code> will be set to 0.0, effectively stopping Q-learning and disabling exploration, in order to allow Pacman to exploit his learned policy. Test games are shown in the GUI by default. Without any code changes you should be able to run Q-learning Pacman for very tiny grids as follows:</p>
+      <pre>python pacman.py -p PacmanQAgent -x 2000 -n 2010 -l smallGrid </pre>
+      <p>Note that <code>PacmanQAgent</code> is already defined for you in terms of the <code>QLearningAgent</code> you've already written. <code>PacmanQAgent</code> is only different in that it has default learning parameters that are more effective for the Pacman problem (<code>epsilon=0.05, alpha=0.2, gamma=0.8</code>). You will receive full credit for this question if the command above works without exceptions and your agent wins at least 80% of the time. We will run 100 test games after the 2000 training games.</p>
+      <p><em>Hint:</em> If your <code>QLearningAgent</code> works for <code><a href="docs/gridworld.html">gridworld.py</a></code> and <code><a href="docs/crawler.html">crawler.py</a></code> but does not seem to be learning a good policy for Pacman on <code>smallGrid</code>, it may be because your <code>getAction</code> and/or <code>computeActionFromQValues</code> methods do not in some cases properly consider unseen actions. In particular, because unseen actions have by definition a Q-value of zero, if all of the actions that <em>have</em> been seen have negative Q-values, an unseen action may be optimal. Beware of the argmax function from util.Counter!</p>
+      <p><em>Note:</em> If you want to experiment with learning parameters, you can use the option <code>-a</code>, for example <code>-a epsilon=0.1,alpha=0.3,gamma=0.7</code>. These values will then be accessible as <code>self.epsilon, self.gamma</code> and <code>self.alpha</code> inside the agent.</p>
+      <p><em>Note:</em> While a total of 2010 games will be played, the first 2000 games will not be displayed because of the option <code>-x 2000</code>, which designates the first 2000 games for training (no output). Thus, you will only see Pacman play the last 10 of these games. The number of training games is also passed to your agent as the option <code>numTraining</code>.</p>
+      <p><em>Note:</em> If you want to watch 10 training games to see what's going on, use the command:</p>
+      <pre>python pacman.py -p PacmanQAgent -n 10 -l smallGrid -a numTraining=10</pre>
+      <p>During training, you will see output every 100 games with statistics about how Pacman is faring. Epsilon is positive during training, so Pacman will play poorly even after having learned a good policy: this is because he occasionally makes a random exploratory move into a ghost. As a benchmark, it should take between 1,000 and 1400 games before Pacman's rewards for a 100 episode segment becomes positive, reflecting that he's started winning more than losing. By the end of training, it should remain positive and be fairly high (between 100 and 350).</p>
+      <p>Make sure you understand what is happening here: the MDP state is the <em>exact</em> board configuration facing Pacman, with the now complex transitions describing an entire ply of change to that state. The intermediate game configurations in which Pacman has moved but the ghosts have not replied are <em>not</em> MDP states, but are bundled in to the transitions.</p>
+      <p>Once Pacman is done training, he should win very reliably in test games (at least 90% of the time), since now he is exploiting his learned policy.</p>
+      <p>However, you will find that training the same agent on the seemingly simple <code><a href="layouts/mediumGrid.lay">mediumGrid</a></code> does not work well. In our implementation, Pacman's average training rewards remain negative throughout training. At test time, he plays badly, probably losing all of his test games. Training will also take a long time, despite its ineffectiveness.</p>
+      <p>Pacman fails to win on larger layouts because each board configuration is a separate state with separate Q-values. He has no way to generalize that running into a ghost is bad for all positions. Obviously, this approach will not scale.</p>
+    </div>
+
+    <hr>
+
+    <div class="project">
+      <h3><a name="Q8"></a>Question 8 (1.5 points): Approximate Q-Learning</h3>
+      <p>Implement an approximate Q-learning agent that learns weights for features of states, where many states might share the same features. Write your implementation in <code>ApproximateQAgent</code> class in <code>><a href="docs/qlearningAgents.html">qlearningAgents.py</a></code>, which is a subclass of <code>PacmanQAgent</code>.</p>
+      <p><em>Note:</em> Approximate Q-learning assumes the existence of a feature function f(s,a) over state and action pairs, which yields a vector f<sub>1</sub>(s,a) .. f<sub>i</sub>(s,a) .. f<sub>n</sub>(s,a) of feature values. We provide feature functions for you in <code><a href="docs/featureExtractors.html">featureExtractors.py</a></code>. Feature vectors are <code>util.Counter</code> (like a dictionary) objects containing the non-zero pairs of features and values; all omitted features have value zero.</p>
+      <p>The approximate Q-function takes the following form</p>
+      <center><img  src="eq_1.png"></center>
+      <p><br> where each weight w<sub>i</sub> is associated with a particular feature f<sub>i</sub>(s,a). In your code, you should implement the weight vector as a dictionary mapping features (which the feature extractors will return) to weight values. You will update your weight vectors similarly to how you updated Q-values:</p>
+      <center><img  src="eq_2.png"></center>
+	  <p><br> Note that the difference term is the same as in normal Q-learning, and r is the experienced reward.</p>
+      <p>By default, <code>ApproximateQAgent</code> uses the <code>IdentityExtractor</code>, which assigns a single feature to every <code>(state,action)</code> pair. With this feature extractor, your approximate Q-learning agent should work identically to <code>PacmanQAgent</code>. You can test this with the following command:</p>
+      <pre>python pacman.py -p ApproximateQAgent -x 2000 -n 2010 -l smallGrid </pre>
+      <p><em>Important:</em><code>ApproximateQAgent</code> is a subclass of <code>QLearningAgent</code>, and it therefore shares several methods like <code>getAction</code>. Make sure that your methods in <code>QLearningAgent</code> call <code>getQValue</code> instead of accessing Q-values directly, so that when you override <code>getQValue</code> in your approximate agent, the new approximate q-values are used to compute actions.</p>
+      <p>Once you're confident that your approximate learner works correctly with the identity features, run your approximate Q-learning agent with our custom feature extractor, which can learn to win with ease:</p>
+      <pre>python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 60 -l mediumGrid </pre>
+      <p>Even much larger layouts should be no problem for your <code>ApproximateQAgent</code>. (<em>warning</em>: this may take a few minutes to train)</p>
+      <pre>python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 60 -l mediumClassic </pre>
+      <p>If you have no errors, your approximate Q-learning agent should win almost every time with these simple features, even with only 50 training games.</p>
+      <p> We will run your approximate Q-learning agent and check that it learns the same Q-values and feature weights as our reference implementation when each is presented with the same set of examples.</p>
+      <p><i>Congratulations! You have a learning Pacman agent!</i></p>
+    </div>
+  </div>
+
+<div style="position: absolute; width: 0px; height: 0px; overflow: hidden; padding: 0px; border: 0px; margin: 0px;"><div id="MathJax_Font_Test" style="position: absolute; visibility: hidden; top: 0px; left: 0px; width: auto; padding: 0px; border: 0px; margin: 0px; white-space: nowrap; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; font-size: 40px; font-weight: normal; font-style: normal; font-family: MathJax_AMS, monospace;"></div></div></body></html>
