@@ -1,4 +1,4 @@
-Artificial Intelligence,Pacman  (Fall 2016)
+Artificial Intelligence, Pacman Game (Fall 2016)
 ======================================
 
 ##Intro
@@ -40,31 +40,54 @@ $ python pacman.py -l trickySearch -p AStarFoodSearchAgent
 
 ##HW2 multi-agent
 ReflexAgent: 
-> A capable reflex agent will have to consider both food locations and ghost locations to perform well.
+A capable reflex agent will have to consider both food locations and ghost locations to perform well.
 ```
 $ python pacman.py --frameTime 0 -p ReflexAgent -k 2
 $ python pacman.py -p ReflexAgent -l openClassic -n 10 -q
 ```
 MinimaxAgent: 
-> Write an adversarial search agent in the provided MinimaxAgent class stub in multiAgents.py
+Write an adversarial search agent in the provided MinimaxAgent class stub in multiAgents.py
 ```
 $ python pacman.py -p MinimaxAgent -l minimaxClassic -a depth=4
 ```
 AlphaBetaAgent: 
-> Make a new agent that uses alpha-beta pruning to more efficiently explore the minimax tree.
+Make a new agent that uses alpha-beta pruning to more efficiently explore the minimax tree.
 ```
 $ python pacman.py -p AlphaBetaAgent -l trappedClassic -a depth=3 -q -n 10
 ```
 Expectimax: 
-> ExpectimaxAgent is useful for modeling probabilistic behavior of agents who may make suboptimal choices.
+ExpectimaxAgent is useful for modeling probabilistic behavior of agents who may make suboptimal choices.
 ```
 $ python pacman.py -l smallClassic -p ExpectimaxAgent -a evalFn=better -q -n 30
 ```
 
 ##HW3 reinforcement 
+In this project, you will implement value iteration and Q-learning. You will test your agents first on Gridworld (from class), then apply them to a simulated robot controller (Crawler) and Pacman.
+```
+$ python gridworld.py -m
+```
+Value Iteration: an offline planner, not a reinforcement learning agent, and so the relevant training option is the number of iterations of value iteration it should run (option -i) in its initial planning phase.
+```
+$ python gridworld.py -a value -i 5
+```
+Q-Learning: Write a Q-learning agent, which does very little on construction, but instead learns by trial and error from interactions with the environment through its update(state, action, nextState, reward) method.
+```
+$ python gridworld.py -a q -k 100 
+```
+Q-Learning and Pacman
+```
+$ python pacman.py -p PacmanQAgent -x 2000 -n 2010 -l smallGrid  
+```
+Approximate Q-Learning: Implement an approximate Q-learning agent that learns weights for features of states, where many states might share the same features. 
+```
+$ python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 60 -l mediumGrid
+```
 
 ##HW3-Bonus Ghostbusters
-
+In this project, you will design Pacman agents that use sensors to locate and eat invisible ghosts. You'll advance from locating single, stationary ghosts to hunting packs of multiple moving ghosts with ruthless efficiency.
+```
+$ python busters.py -l smallHunt -p GreedyBustersAgent -n 10 --frameTime=0  
+```
 ##Credits
 This is the homework project for the course Artificial Intelligence  (2016 Fall), at National Taiwan University
 Arthur: Chien-Sheng Wu
