@@ -1,8 +1,7 @@
-Artificial Intelligence Fall 2016
-=================================
-Prof. YU, TIAN-LI AI course
+Artificial Intelligence,Pacman  (Fall 2016)
+======================================
 
-###Intro
+##Intro
 [The Pacman Projects](http://ai.berkeley.edu/project_overview.html) by the [University of California, Berkeley](http://berkeley.edu/).
 
 ![Animated gif pacman game](http://ai.berkeley.edu/images/pacman_game.gif)
@@ -18,7 +17,7 @@ You can see the list of all options and their default values via:
 $ python pacman.py -h
 ```
 
-##HW1
+##HW1 Search
 DFS, BFS, UCS, ASTAR, ASTAR heuristic 
 ```
 $ python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=dfs
@@ -39,3 +38,33 @@ $ python pacman.py -l trickySearch -p AStarFoodSearchAgent
 
 > for more information, check [here](https://github.com/jasonwu0731/NTU-AI-Fall2016/blob/master/Pacman/hw1-search/Project1.html) for details
 
+##HW2 multi-agent
+ReflexAgent: 
+> A capable reflex agent will have to consider both food locations and ghost locations to perform well.
+```
+$ python pacman.py --frameTime 0 -p ReflexAgent -k 2
+$ python pacman.py -p ReflexAgent -l openClassic -n 10 -q
+```
+MinimaxAgent: 
+> Write an adversarial search agent in the provided MinimaxAgent class stub in multiAgents.py
+```
+$ python pacman.py -p MinimaxAgent -l minimaxClassic -a depth=4
+```
+AlphaBetaAgent: 
+> Make a new agent that uses alpha-beta pruning to more efficiently explore the minimax tree.
+```
+$ python pacman.py -p AlphaBetaAgent -l trappedClassic -a depth=3 -q -n 10
+```
+Expectimax: 
+> ExpectimaxAgent is useful for modeling probabilistic behavior of agents who may make suboptimal choices.
+```
+$ python pacman.py -l smallClassic -p ExpectimaxAgent -a evalFn=better -q -n 30
+```
+
+##HW3 reinforcement 
+
+##HW3-Bonus Ghostbusters
+
+##Credits
+This is the homework project for the course Artificial Intelligence  (2016 Fall), at National Taiwan University
+Arthur: Chien-Sheng Wu
