@@ -18,20 +18,19 @@ $ python pacman.py -h
 ```
 
 ##HW1 Search
-DFS, BFS, UCS, ASTAR, ASTAR heuristic 
+- DFS, BFS, UCS, ASTAR, ASTAR heuristic 
 ```
 $ python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=dfs
 $ python pacman.py -l bigMaze -p SearchAgent -a fn=bfs -z .5
 $ python pacman.py -l bigMaze -p SearchAgent -a fn=ucs
 $ python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
 ```
-Corner problem, Corner heuristic
+- Corner problem, Corner heuristic
 ```
 $ python pacman.py -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
 $ python pacman.py -l mediumCorners -p AStarCornersAgent -z 0.5
 ```
-
-Eating all the dots
+- Eating all the dots
 ```
 $ python pacman.py -l trickySearch -p AStarFoodSearchAgent
 ```
@@ -39,23 +38,23 @@ $ python pacman.py -l trickySearch -p AStarFoodSearchAgent
 > for more information, check [here](https://github.com/jasonwu0731/NTU-AI-Fall2016/blob/master/Pacman/hw1-search/Project1.html) for details
 
 ##HW2 multi-agent
-ReflexAgent: 
+- ReflexAgent: 
 A capable reflex agent will have to consider both food locations and ghost locations to perform well.
 ```
 $ python pacman.py --frameTime 0 -p ReflexAgent -k 2
 $ python pacman.py -p ReflexAgent -l openClassic -n 10 -q
 ```
-MinimaxAgent: 
+- MinimaxAgent: 
 Write an adversarial search agent in the provided MinimaxAgent class stub in multiAgents.py
 ```
 $ python pacman.py -p MinimaxAgent -l minimaxClassic -a depth=4
 ```
-AlphaBetaAgent: 
+- AlphaBetaAgent: 
 Make a new agent that uses alpha-beta pruning to more efficiently explore the minimax tree.
 ```
 $ python pacman.py -p AlphaBetaAgent -l trappedClassic -a depth=3 -q -n 10
 ```
-Expectimax: 
+- Expectimax: 
 ExpectimaxAgent is useful for modeling probabilistic behavior of agents who may make suboptimal choices.
 ```
 $ python pacman.py -l smallClassic -p ExpectimaxAgent -a evalFn=better -q -n 30
@@ -66,19 +65,19 @@ In this project, you will implement value iteration and Q-learning. You will tes
 ```
 $ python gridworld.py -m
 ```
-Value Iteration: an offline planner, not a reinforcement learning agent, and so the relevant training option is the number of iterations of value iteration it should run (option -i) in its initial planning phase.
+- Value Iteration: an offline planner, not a reinforcement learning agent, and so the relevant training option is the number of iterations of value iteration it should run (option -i) in its initial planning phase.
 ```
 $ python gridworld.py -a value -i 5
 ```
-Q-Learning: Write a Q-learning agent, which does very little on construction, but instead learns by trial and error from interactions with the environment through its update(state, action, nextState, reward) method.
+- Q-Learning: Write a Q-learning agent, which does very little on construction, but instead learns by trial and error from interactions with the environment through its update(state, action, nextState, reward) method.
 ```
 $ python gridworld.py -a q -k 100 
 ```
-Q-Learning and Pacman
+- Q-Learning and Pacman
 ```
 $ python pacman.py -p PacmanQAgent -x 2000 -n 2010 -l smallGrid  
 ```
-Approximate Q-Learning: Implement an approximate Q-learning agent that learns weights for features of states, where many states might share the same features. 
+- Approximate Q-Learning: Implement an approximate Q-learning agent that learns weights for features of states, where many states might share the same features. 
 ```
 $ python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 60 -l mediumGrid
 ```
