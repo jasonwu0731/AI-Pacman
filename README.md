@@ -88,5 +88,5 @@ In this project, you will design Pacman agents that use sensors to locate and ea
 $ python busters.py -l smallHunt -p GreedyBustersAgent -n 10 --frameTime=0  
 ```
 ##Credits
-This is the homework project for the course Artificial Intelligence  (2016 Fall), at National Taiwan University
-Arthur: Chien-Sheng Wu
+- This is the homework project for the course Artificial Intelligence  (2016 Fall), at National Taiwan University
+- Arthor: Chien-Sheng Wu
