@@ -89,4 +89,4 @@ $ python busters.py -l smallHunt -p GreedyBustersAgent -n 10 --frameTime=0  
 ```
 ##Credits
 - This is the homework project for the course Artificial Intelligence  (2016 Fall), at National Taiwan University
-- Arthor: Chien-Sheng Wu
+- Author: Chien-Sheng Wu
