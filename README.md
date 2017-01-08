@@ -37,7 +37,7 @@ $ python pacman.py -l trickySearch -p AStarFoodSearchAgent
 
 > for more information, check [here](https://github.com/jasonwu0731/NTU-AI-Fall2016/blob/master/Pacman/hw1-search/Project1.html) for details
 
-##HW2 multi-agent
+##HW2 Multi-Agent
 - ReflexAgent: 
 A capable reflex agent will have to consider both food locations and ghost locations to perform well.
 ```
@@ -60,7 +60,7 @@ ExpectimaxAgent is useful for modeling probabilistic behavior of agents who may 
 $ python pacman.py -l smallClassic -p ExpectimaxAgent -a evalFn=better -q -n 30
 ```
 
-##HW3 reinforcement 
+##HW3 Reinforcement Learning
 In this project, you will implement value iteration and Q-learning. You will test your agents first on Gridworld (from class), then apply them to a simulated robot controller (Crawler) and Pacman.
 ```
 $ python gridworld.py -m
