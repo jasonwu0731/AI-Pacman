@@ -17,7 +17,7 @@ You can see the list of all options and their default values via:
 $ python pacman.py -h
 ```
 
-##HW1 Search
+## HW1 Search
 - DFS, BFS, UCS, ASTAR, ASTAR heuristic 
 ```
 $ python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=dfs
@@ -37,7 +37,7 @@ $ python pacman.py -l trickySearch -p AStarFoodSearchAgent
 
 > for more information, check [here](https://github.com/jasonwu0731/NTU-AI-Fall2016/blob/master/Pacman/hw1-search/Project1.html) for details
 
-##HW2 Multi-Agent
+## HW2 Multi-Agent
 - ReflexAgent: 
 A capable reflex agent will have to consider both food locations and ghost locations to perform well.
 ```
@@ -60,7 +60,7 @@ ExpectimaxAgent is useful for modeling probabilistic behavior of agents who may 
 $ python pacman.py -l smallClassic -p ExpectimaxAgent -a evalFn=better -q -n 30
 ```
 
-##HW3 Reinforcement Learning
+## HW3 Reinforcement Learning
 In this project, you will implement value iteration and Q-learning. You will test your agents first on Gridworld (from class), then apply them to a simulated robot controller (Crawler) and Pacman.
 ```
 $ python gridworld.py -m
@@ -82,11 +82,11 @@ $ python pacman.py -p PacmanQAgent -x 2000 -n 2010 -l smallGrid
 $ python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 60 -l mediumGrid
 ```
 
-##HW3-Bonus Ghostbusters
+## HW3-Bonus Ghostbusters
 In this project, you will design Pacman agents that use sensors to locate and eat invisible ghosts. You'll advance from locating single, stationary ghosts to hunting packs of multiple moving ghosts with ruthless efficiency.
 ```
 $ python busters.py -l smallHunt -p GreedyBustersAgent -n 10 --frameTime=0  
 ```
-##Credits
+## Credits
 - This is the homework project for the course Artificial Intelligence  (2016 Fall), at National Taiwan University
 - Author: Chien-Sheng Wu
